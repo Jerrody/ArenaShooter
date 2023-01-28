@@ -1,4 +1,5 @@
 using System;
+using Game.Weapons;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,8 +7,10 @@ namespace Game.Characters.Player
 {
     public sealed class PlayerController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
-        public event Action<bool> AimEvent;
+        public Action<bool> AimEvent;
+
         public event Action<bool> FireEvent;
+        public event Action ReloadEvent;
         public event Action<bool> ZoomEvent;
         public event Action<bool> RunEvent;
 
@@ -21,12 +24,12 @@ namespace Game.Characters.Player
         private float mouseSensitivity = 30.0f;
 
         private CharacterController _controller;
+        private WeaponHolderController _weaponHolderController;
         private Camera _camera;
 
         public bool isAiming { get; private set; }
 
-        public bool isRunning { get; private set; }
-        public bool isFiring { get; private set; }
+        private bool isRunning { get; set; }
         public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
         public bool isJumping { get; private set; }
 
@@ -41,6 +44,8 @@ namespace Game.Characters.Player
 
             _controller = GetComponent<CharacterController>();
             _camera = GetComponentInChildren<Camera>();
+
+            _weaponHolderController = GetComponentInChildren<WeaponHolderController>();
 
             _speed = walkSpeed;
         }
@@ -79,17 +84,14 @@ namespace Game.Characters.Player
         {
             isAiming = ctx.started || ctx.performed;
 
-            AimEvent?.Invoke(isAiming);
+            AimEvent?.Invoke(isAiming && !_weaponHolderController.isReloading);
 
             _speed = isAiming ? walkSpeedScoped : walkSpeed;
         }
 
         public void Fire(InputAction.CallbackContext ctx)
         {
-            if (ctx.performed)
-                FireEvent?.Invoke(ctx.performed); // TODO: Remove input parameter.
-            if (ctx.canceled)
-                FireEvent?.Invoke(false); // TODO: Remove input parameter.
+            FireEvent?.Invoke(ctx.performed && !ctx.canceled);
         }
 
         public void Run(InputAction.CallbackContext ctx)
@@ -114,6 +116,15 @@ namespace Game.Characters.Player
                     RunEvent?.Invoke(false);
                     break;
             }
+        }
+
+        public void Reload(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.started)
+                return;
+
+            ReloadEvent?.Invoke();
+            AimEvent?.Invoke(false);
         }
     }
 }

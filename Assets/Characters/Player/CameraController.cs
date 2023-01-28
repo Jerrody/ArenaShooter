@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.Characters.Player
 {
-    public class CameraController : MonoBehaviour
+    public sealed class CameraController : MonoBehaviour
     {
         [Header("Field of View Stats")] [SerializeField]
         private float fieldOfViewScoped = 45.0f;

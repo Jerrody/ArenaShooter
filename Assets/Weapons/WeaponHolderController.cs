@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Game.Characters.Player;
 using UnityEngine;
@@ -9,42 +10,64 @@ namespace Game.Weapons
         private WeaponController[] _weapons;
         private WeaponController _currentWeapon;
 
+        private PlayerController _playerController;
         private PlayerAnimationController _playerAnimationController;
+
+        public bool isReloading { get; private set; }
 
         private bool _isFiring;
 
         private void Awake()
         {
-            _weapons = GetComponentsInChildren<WeaponController>();
             _playerAnimationController = GetComponentInParent<PlayerAnimationController>();
-            var playerController = GetComponentInParent<PlayerController>();
-            playerController.FireEvent += OnFire;
 
+            _playerController = GetComponentInParent<PlayerController>();
+            _playerController.FireEvent += OnFire;
+            _playerController.ReloadEvent += OnReload;
+
+            _weapons = GetComponentsInChildren<WeaponController>();
             foreach (var weapon in _weapons)
             {
+                weapon.ReloadFinishedEvent += OnReloadFinished;
                 weapon.gameObject.SetActive(false);
             }
 
-            if ((_currentWeapon = _weapons.First()) != null)
-            {
-                _currentWeapon.gameObject.SetActive(true);
-            }
+            if ((_currentWeapon = _weapons.First()) == null)
+                throw new NullReferenceException("[ERROR]: Empty array of `Weapons`.");
+
+            _currentWeapon.gameObject.SetActive(true);
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        // Update is called once per frame
         private void Update()
         {
-            _playerAnimationController.FireAnimationEvent?.Invoke(_isFiring && _currentWeapon.CanShoot());
+            _playerAnimationController.FireAnimationEvent?.Invoke(!isReloading && _isFiring &&
+                                                                  _currentWeapon.CanShoot());
         }
 
         private void OnFire(bool isFiring)
         {
             _isFiring = isFiring;
+
+            if (_currentWeapon.isEnoughAmmoInClip || !isFiring || isReloading) return;
+
+            isReloading = true;
+            _playerAnimationController.ReloadAnimationEvent?.Invoke();
+            _playerController.AimEvent?.Invoke(false);
+        }
+
+        private void OnReload()
+        {
+            if (isReloading)
+                return;
+
+            isReloading = true;
+            _playerAnimationController.ReloadAnimationEvent?.Invoke();
+        }
+
+        private void OnReloadFinished()
+        {
+            isReloading = false;
+            _playerController.AimEvent?.Invoke(_playerController.isAiming);
         }
     }
 }

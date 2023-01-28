@@ -6,9 +6,11 @@ namespace Game.Characters.Player
     public sealed class PlayerAnimationController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
         public Action<bool> FireAnimationEvent;
+        public Action ReloadAnimationEvent;
 
         private static readonly int IsAimingId = Animator.StringToHash("IsAiming");
         private static readonly int IsFiringId = Animator.StringToHash("IsFiring");
+        private static readonly int IsReloadingId = Animator.StringToHash("IsReloading");
         private static readonly int IsMovingId = Animator.StringToHash("IsMoving");
         private static readonly int IsJumpingId = Animator.StringToHash("IsJumping");
 
@@ -22,9 +24,10 @@ namespace Game.Characters.Player
             _animator =
                 GetComponentInChildren<Animator>(); // Move logic of getting animator to the `WeaponHolderController`.
             _playerController = GetComponentInParent<PlayerController>();
-
             _playerController.RunEvent += OnRun;
+
             FireAnimationEvent += OnFire;
+            ReloadAnimationEvent += OnReload;
         }
 
         private void Update()
@@ -42,6 +45,11 @@ namespace Game.Characters.Player
         private void OnFire(bool isFiring)
         {
             _animator.SetBool(IsFiringId, isFiring);
+        }
+
+        private void OnReload()
+        {
+            _animator.SetTrigger(IsReloadingId);
         }
     }
 }
