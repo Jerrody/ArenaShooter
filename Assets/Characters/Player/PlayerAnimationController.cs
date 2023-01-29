@@ -6,11 +6,13 @@ namespace Game.Characters.Player
     public sealed class PlayerAnimationController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
         public Action<bool> FireAnimationEvent;
-        public Action ReloadAnimationEvent;
+        public Action ReloadAmmoAnimationEvent;
+        public Action ReloadNoAmmoAnimationEvent;
 
         private static readonly int IsAimingId = Animator.StringToHash("IsAiming");
         private static readonly int IsFiringId = Animator.StringToHash("IsFiring");
-        private static readonly int IsReloadingId = Animator.StringToHash("IsReloading");
+        private static readonly int ReloadAmmoId = Animator.StringToHash("ReloadAmmo");
+        private static readonly int ReloadNoAmmoId = Animator.StringToHash("ReloadNoAmmo");
         private static readonly int IsMovingId = Animator.StringToHash("IsMoving");
         private static readonly int IsJumpingId = Animator.StringToHash("IsJumping");
 
@@ -27,7 +29,8 @@ namespace Game.Characters.Player
             _playerController.RunEvent += OnRun;
 
             FireAnimationEvent += OnFire;
-            ReloadAnimationEvent += OnReload;
+            ReloadAmmoAnimationEvent += OnReload;
+            ReloadNoAmmoAnimationEvent += OnReloadNoAmmo;
         }
 
         private void Update()
@@ -49,7 +52,12 @@ namespace Game.Characters.Player
 
         private void OnReload()
         {
-            _animator.SetTrigger(IsReloadingId);
+            _animator.SetTrigger(ReloadAmmoId);
+        }
+
+        private void OnReloadNoAmmo()
+        {
+            _animator.SetTrigger(ReloadNoAmmoId);
         }
     }
 }

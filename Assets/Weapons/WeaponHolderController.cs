@@ -40,7 +40,7 @@ namespace Game.Weapons
 
         private void Update()
         {
-            _playerAnimationController.FireAnimationEvent?.Invoke(!isReloading && _isFiring &&
+            _playerAnimationController.FireAnimationEvent?.Invoke(_isFiring &&
                                                                   _currentWeapon.CanShoot());
         }
 
@@ -48,10 +48,25 @@ namespace Game.Weapons
         {
             _isFiring = isFiring;
 
-            if (_currentWeapon.isEnoughAmmoInClip || !isFiring || isReloading) return;
+            if (_currentWeapon.isEnoughAmmoInClip)
+            {
+                isReloading = false;
+                return;
+            }
+
+            if (isReloading)
+                return;
 
             isReloading = true;
-            _playerAnimationController.ReloadAnimationEvent?.Invoke();
+            if (_currentWeapon.isEnoughAmmo)
+            {
+                _playerAnimationController.ReloadAmmoAnimationEvent?.Invoke();
+            }
+            else
+            {
+                _playerAnimationController.ReloadNoAmmoAnimationEvent?.Invoke();
+            }
+
             _playerController.AimEvent?.Invoke(false);
         }
 
@@ -61,7 +76,14 @@ namespace Game.Weapons
                 return;
 
             isReloading = true;
-            _playerAnimationController.ReloadAnimationEvent?.Invoke();
+            if (_currentWeapon.isEnoughAmmo)
+            {
+                _playerAnimationController.ReloadAmmoAnimationEvent?.Invoke();
+            }
+            else
+            {
+                _playerAnimationController.ReloadNoAmmoAnimationEvent?.Invoke();
+            }
         }
 
         private void OnReloadFinished()

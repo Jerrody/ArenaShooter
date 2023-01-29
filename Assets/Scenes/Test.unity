@@ -474,6 +474,11 @@ PrefabInstance:
       propertyPath: ammo.maxAmmo
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3795270207532464333, guid: c2f60e07d03fb2f4a9cb749536033a89,
+        type: 3}
+      propertyPath: ammo.ammoClip
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3875767621592332474, guid: c2f60e07d03fb2f4a9cb749536033a89,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

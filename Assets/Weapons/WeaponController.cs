@@ -51,10 +51,13 @@ namespace Game.Weapons
 
         private void Reload()
         {
-            var previousAmmo = _currentAmmo;
-            _currentAmmo = Math.Clamp(_currentAmmo - (ammo.ammoClip - _currentAmmoClip), 0, _currentAmmo);
-            _currentAmmoClip += previousAmmo - _currentAmmo;
-            print($"{_currentAmmoClip}/{_currentAmmo}");
+            if (isEnoughAmmo)
+            {
+                var previousAmmo = _currentAmmo;
+                _currentAmmo = Math.Clamp(_currentAmmo - (ammo.ammoClip - _currentAmmoClip), 0, _currentAmmo);
+                _currentAmmoClip += previousAmmo - _currentAmmo;
+                print($"{_currentAmmoClip}/{_currentAmmo}");
+            }
 
             ReloadFinishedEvent?.Invoke();
         }
