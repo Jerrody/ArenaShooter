@@ -10,6 +10,7 @@ namespace Game.Weapons
         public uint ammoClip;
     }
 
+    [RequireComponent(typeof(Animator))]
     public class WeaponController : MonoBehaviour
     {
         public Action ReloadFinishedEvent;
@@ -18,10 +19,10 @@ namespace Game.Weapons
         [SerializeField] private float maxHitscanRange = 1000.0f;
         [SerializeField] private Ammo ammo;
 
+        public Animator animator { get; private set; }
+
         public bool isEnoughAmmo => _currentAmmo > 0;
         public bool isEnoughAmmoInClip => _currentAmmoClip > 0;
-
-        private Animator _animator;
 
         private float _nextTimeToFire;
 
@@ -31,6 +32,8 @@ namespace Game.Weapons
 
         private void Awake()
         {
+            animator = GetComponent<Animator>();
+
             _currentAmmoClip = ammo.ammoClip;
             _currentAmmo = ammo.maxAmmo;
         }

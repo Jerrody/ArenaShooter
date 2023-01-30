@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Characters.Player
 {
+    [RequireComponent(typeof(PlayerInput), typeof(CharacterController))]
     public sealed class PlayerController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
         public Action<bool> AimEvent;
@@ -13,6 +14,7 @@ namespace Game.Characters.Player
         public event Action ReloadEvent;
         public event Action<bool> ZoomEvent;
         public event Action<bool> RunEvent;
+        public event Action<uint> WeaponSwitchEvent;
 
         [Header("Stats")] [SerializeField] private float walkSpeed = 20.0f;
         [SerializeField] private float runSpeed = 30.0f;
@@ -84,6 +86,7 @@ namespace Game.Characters.Player
         {
             isAiming = ctx.started || ctx.performed;
 
+            print($"{isAiming && !_weaponHolderController.isReloading}");
             AimEvent?.Invoke(isAiming && !_weaponHolderController.isReloading);
 
             _speed = isAiming ? walkSpeedScoped : walkSpeed;
@@ -125,6 +128,16 @@ namespace Game.Characters.Player
 
             ReloadEvent?.Invoke();
             AimEvent?.Invoke(false);
+        }
+
+        public void SwitchWeapon(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.started) return;
+
+            
+            var weaponIndex = uint.Parse(ctx.control.name) - 1;
+
+            WeaponSwitchEvent?.Invoke(weaponIndex);
         }
     }
 }

@@ -1,5 +1,6 @@
 using Game.Utils;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Characters.Player
 {

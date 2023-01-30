@@ -16,6 +16,7 @@ namespace Game.Weapons
         public bool isReloading { get; private set; }
 
         private bool _isFiring;
+        private uint _previousIndex;
 
         private void Awake()
         {
@@ -24,8 +25,9 @@ namespace Game.Weapons
             _playerController = GetComponentInParent<PlayerController>();
             _playerController.FireEvent += OnFire;
             _playerController.ReloadEvent += OnReload;
+            _playerController.WeaponSwitchEvent += OnWeaponSwitch;
 
-            _weapons = GetComponentsInChildren<WeaponController>();
+            _weapons = GetComponentsInChildren<WeaponController>(true);
             foreach (var weapon in _weapons)
             {
                 weapon.ReloadFinishedEvent += OnReloadFinished;
@@ -40,8 +42,8 @@ namespace Game.Weapons
 
         private void Update()
         {
-            _playerAnimationController.FireAnimationEvent?.Invoke(_isFiring &&
-                                                                  _currentWeapon.CanShoot());
+            _playerAnimationController.TriggerFireAnimationEvent?.Invoke(_isFiring &&
+                                                                         _currentWeapon.CanShoot());
         }
 
         private void OnFire(bool isFiring)
@@ -60,11 +62,11 @@ namespace Game.Weapons
             isReloading = true;
             if (_currentWeapon.isEnoughAmmo)
             {
-                _playerAnimationController.ReloadAmmoAnimationEvent?.Invoke();
+                _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
             }
             else
             {
-                _playerAnimationController.ReloadNoAmmoAnimationEvent?.Invoke();
+                _playerAnimationController.TriggerReloadNoAmmoAnimationEvent?.Invoke();
             }
 
             _playerController.AimEvent?.Invoke(false);
@@ -78,11 +80,11 @@ namespace Game.Weapons
             isReloading = true;
             if (_currentWeapon.isEnoughAmmo)
             {
-                _playerAnimationController.ReloadAmmoAnimationEvent?.Invoke();
+                _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
             }
             else
             {
-                _playerAnimationController.ReloadNoAmmoAnimationEvent?.Invoke();
+                _playerAnimationController.TriggerReloadNoAmmoAnimationEvent?.Invoke();
             }
         }
 
@@ -90,6 +92,22 @@ namespace Game.Weapons
         {
             isReloading = false;
             _playerController.AimEvent?.Invoke(_playerController.isAiming);
+        }
+
+        private void OnWeaponSwitch(uint weaponIndex)
+        {
+            if (_previousIndex == weaponIndex)
+                return;
+            _previousIndex = weaponIndex;
+
+            isReloading = false;
+            _isFiring = false;
+
+            _currentWeapon.gameObject.SetActive(false);
+
+            _currentWeapon = _weapons[weaponIndex];
+            _currentWeapon.gameObject.SetActive(true);
+            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(_currentWeapon.animator);
         }
     }
 }
