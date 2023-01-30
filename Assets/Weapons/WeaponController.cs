@@ -13,11 +13,16 @@ namespace Game.Weapons
     [RequireComponent(typeof(Animator))]
     public class WeaponController : MonoBehaviour
     {
+        // private static readonly LayerMask BulletSpawnPoint = LayerMask.GetMask("BulletSpawnPoint");
+
         public Action ReloadFinishedEvent;
 
+        [Header("References")] [SerializeField]
+        private Transform bulletSpawnPoint;
+
         [Header("Stats")] [SerializeField] protected float fireRate;
-        [SerializeField] private float maxHitscanRange = 1000.0f;
         [SerializeField] protected Ammo ammo;
+        [SerializeField] private float maxHitscanRange = 1000.0f;
 
         [Header("Field of View Stats")] [SerializeField]
         private float fieldOfViewScoped = 45.0f;
@@ -51,10 +56,12 @@ namespace Game.Weapons
             _currentAmmoClip--;
             print($"{_currentAmmoClip}");
 
-            var ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
-            if (!Physics.Raycast(ray, out var raycastHit, maxHitscanRange))
-            {
-            }
+            // var ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
+            if (!Physics.Raycast(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward),
+                    out var raycastHit, maxHitscanRange)) return;
+
+            Debug.DrawRay(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward) * 10.0f,
+                Color.red, 20.0f);
         }
 
         private void Reload()

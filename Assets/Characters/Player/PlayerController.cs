@@ -130,7 +130,8 @@ namespace Game.Characters.Player
                 return;
 
             ReloadEvent?.Invoke();
-            AimEvent?.Invoke(false);
+            isAiming = false;
+            AimEvent?.Invoke(isAiming);
         }
 
         public void SwitchWeapon(InputAction.CallbackContext ctx)

@@ -29,6 +29,7 @@ namespace Game.Weapons
             _playerController.FireEvent += OnFire;
             _playerController.ReloadEvent += OnReload;
             _playerController.WeaponSwitchEvent += OnWeaponSwitch;
+            _playerController.AimEvent += OnAim;
 
             _weapons = GetComponentsInChildren<WeaponController>(true);
             foreach (var weapon in _weapons)
@@ -53,13 +54,16 @@ namespace Game.Weapons
         {
             _isFiring = isFiring;
 
-            if (_currentWeapon.isEnoughAmmoInClip)
+            switch (_currentWeapon.isEnoughAmmoInClip)
             {
-                _isReloading = false;
-                return;
+                case false when !isFiring:
+                    return;
+                case true:
+                    _isReloading = false;
+                    return;
             }
 
-            if (_isReloading || !_isFiring)
+            if (_isReloading)
                 return;
 
             _isReloading = true;
@@ -111,6 +115,12 @@ namespace Game.Weapons
             _currentWeapon = _weapons[weaponIndex];
             _currentWeapon.gameObject.SetActive(true);
             _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(_currentWeapon.animator);
+        }
+
+        private void OnAim(bool isAiming)
+        {
+            if (isAiming)
+                _isReloading = false;
         }
     }
 }

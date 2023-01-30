@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &39327039460706333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6344772579082251625}
+  m_Layer: 6
+  m_Name: BulletSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &6344772579082251625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39327039460706333}
+  m_LocalRotation: {x: -0.7086161, y: -0.005374615, z: -0.005351388, w: 0.7055535}
+  m_LocalPosition: {x: 0.000023165565, y: 0.011763626, z: 0.00013372373}
+  m_LocalScale: {x: 0.01, y: 0.009999908, z: 0.010000001}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1285204258150397244}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &79183300015940247
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,13 +324,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af08feb5a023b1a4eace6ea885b9590d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletSpawnPoint: {fileID: 0}
   fireRate: 5
-  maxHitscanRange: 1000
   ammo:
     maxAmmo: 36
     ammoClip: 12
-  fieldOfViewScoped: 50
-  zoomInFieldOfView: 40
+  maxHitscanRange: 997.3
+  fieldOfViewScoped: 55
+  zoomInFieldOfView: 50
 --- !u!1 &2136405122739697319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1521,6 +1553,7 @@ Transform:
   m_Children:
   - {fileID: 2272280008856812087}
   - {fileID: 6607668100414519524}
+  - {fileID: 6344772579082251625}
   m_Father: {fileID: 581845948177838684}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
