@@ -26,30 +26,35 @@ namespace Game.Characters.Player
         private float mouseSensitivity = 30.0f;
 
         private CharacterController _controller;
+        private PlayerCameraController _cameraController;
         private WeaponHolderController _weaponHolderController;
-        private Camera _camera;
+
+        public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
 
         public bool isAiming { get; private set; }
-
         private bool isRunning { get; set; }
-        public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
         public bool isJumping { get; private set; }
+        public float rotation { get; private set; }
 
         private Vector3 _moveDirection;
         private Vector2 _mouseDelta; // TODO: Remove it later.
-        private float _rotation;
         private float _speed;
 
         public void Awake()
         {
             Cursor.lockState = CursorLockMode.Locked;
+            // Cursor.visible = false;
 
             _controller = GetComponent<CharacterController>();
-            _camera = GetComponentInChildren<Camera>();
-
+            _cameraController = GetComponentInChildren<PlayerCameraController>();
             _weaponHolderController = GetComponentInChildren<WeaponHolderController>();
 
             _speed = walkSpeed;
+        }
+
+        private void Start()
+        {
+            SetCameraFieldOfViewAndZoom();
         }
 
         private void Update()
@@ -58,9 +63,8 @@ namespace Game.Characters.Player
 
             _controller.Move(transform.TransformDirection(_moveDirection) * (_speed * deltaTime));
 
-            _rotation -= _mouseDelta.y * Time.deltaTime * mouseSensitivity;
-            _rotation = Mathf.Clamp(_rotation, -75.0f, 75.0f);
-            _camera.transform.localRotation = Quaternion.Euler(_rotation, 0.0f, 0.0f);
+            rotation -= _mouseDelta.y * Time.deltaTime * mouseSensitivity;
+            rotation = Mathf.Clamp(rotation, -75.0f, 75.0f);
 
             transform.Rotate(Vector3.up * (_mouseDelta.x * deltaTime * mouseSensitivity));
         }
@@ -86,7 +90,6 @@ namespace Game.Characters.Player
         {
             isAiming = ctx.started || ctx.performed;
 
-            print($"{isAiming && !_weaponHolderController.isReloading}");
             AimEvent?.Invoke(isAiming);
 
             _speed = isAiming ? walkSpeedScoped : walkSpeed;
@@ -134,10 +137,16 @@ namespace Game.Characters.Player
         {
             if (!ctx.started) return;
 
-
             var weaponIndex = uint.Parse(ctx.control.name) - 1;
 
             WeaponSwitchEvent?.Invoke(weaponIndex);
+            SetCameraFieldOfViewAndZoom();
+        }
+
+        private void SetCameraFieldOfViewAndZoom()
+        {
+            _cameraController.SetFieldOfViewScoped(_weaponHolderController.fieldOfViewScoped);
+            _cameraController.SetZoomInFieldOfView(_weaponHolderController.zoomInFieldOfView);
         }
     }
 }

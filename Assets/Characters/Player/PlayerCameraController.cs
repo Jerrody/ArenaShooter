@@ -1,26 +1,25 @@
 using Game.Utils;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Game.Characters.Player
 {
-    public sealed class CameraController : MonoBehaviour
+    public sealed class PlayerCameraController : MonoBehaviour
     {
         [Header("Field of View Stats")] [SerializeField]
-        private float fieldOfViewScoped = 45.0f;
+        private float fieldOfView = 75.0f;
 
-        [SerializeField] private float fieldOfView = 75.0f;
+        [SerializeField] private float fieldOfViewScoped = 45.0f;
+        [SerializeField] public float zoomInFieldOfView = 35.0f;
+
         [SerializeField] private float scopeSpeed = 5.0f;
 
         [Header("Zoom Stats")] [SerializeField]
-        private float zoomInFieldOfView = 35.0f;
+        private float zoomTime = 3.5f;
 
-        [SerializeField] private float zoomOutFieldOfView = 45.0f;
-        [SerializeField] private float zoomTime = 3.5f;
         [SerializeField] private float zoomResetTime = 2.0f;
 
+        private PlayerController _playerController;
         private Camera _camera;
-
         private Timer _zoomTimer;
 
         private float _targetFieldOfView;
@@ -29,9 +28,9 @@ namespace Game.Characters.Player
 
         private void Awake()
         {
-            var playerController = GetComponentInParent<PlayerController>();
-            playerController.AimEvent += OnAim;
-            playerController.ZoomEvent += OnZoom;
+            _playerController = GetComponentInParent<PlayerController>();
+            _playerController.AimEvent += OnAim;
+            _playerController.ZoomEvent += OnZoom;
 
             _camera = GetComponent<Camera>();
             _camera.fieldOfView = fieldOfView;
@@ -41,6 +40,7 @@ namespace Game.Characters.Player
         private void Update()
         {
             _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _targetFieldOfView, Time.deltaTime * scopeSpeed);
+            _camera.transform.localRotation = Quaternion.Euler(_playerController.rotation, 0.0f, 0.0f);
         }
 
         private void OnAim(bool isAiming)
@@ -54,7 +54,7 @@ namespace Game.Characters.Player
             if (!_canZoom) return;
 
             _targetFieldOfView =
-                isZooming ? zoomInFieldOfView : zoomOutFieldOfView;
+                isZooming ? zoomInFieldOfView : fieldOfViewScoped;
 
             if (_zoomTimer == null)
             {
@@ -72,9 +72,19 @@ namespace Game.Characters.Player
             _canZoom = !_canZoom;
 
             if (_isAiming)
-                _targetFieldOfView = zoomOutFieldOfView;
+                _targetFieldOfView = fieldOfViewScoped;
 
             Timer.Create(() => _canZoom = !_canZoom, zoomResetTime);
+        }
+
+        public void SetFieldOfViewScoped(float newFieldOfViewScoped)
+        {
+            fieldOfViewScoped = newFieldOfViewScoped;
+        }
+
+        public void SetZoomInFieldOfView(float newZoomInFieldOfView)
+        {
+            zoomInFieldOfView = newZoomInFieldOfView;
         }
     }
 }

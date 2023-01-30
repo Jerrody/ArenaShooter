@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Game.Weapons
 {
     [Serializable]
-    internal struct Ammo
+    public struct Ammo
     {
         public uint maxAmmo;
         public uint ammoClip;
@@ -17,7 +17,12 @@ namespace Game.Weapons
 
         [Header("Stats")] [SerializeField] protected float fireRate;
         [SerializeField] private float maxHitscanRange = 1000.0f;
-        [SerializeField] private Ammo ammo;
+        [SerializeField] protected Ammo ammo;
+
+        [Header("Field of View Stats")] [SerializeField]
+        private float fieldOfViewScoped = 45.0f;
+
+        [SerializeField] private float zoomInFieldOfView = 35.0f;
 
         public Animator animator { get; private set; }
 
@@ -73,6 +78,16 @@ namespace Game.Weapons
             _nextTimeToFire = Time.time + 1.0f / fireRate;
 
             return true;
+        }
+
+        public float GetFieldOfViewScoped()
+        {
+            return fieldOfViewScoped;
+        }
+
+        public float GetZoomInFieldOfView()
+        {
+            return zoomInFieldOfView;
         }
     }
 }

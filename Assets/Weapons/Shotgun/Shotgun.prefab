@@ -293,11 +293,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af08feb5a023b1a4eace6ea885b9590d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 1
+  fireRate: 5
   maxHitscanRange: 1000
   ammo:
     maxAmmo: 36
     ammoClip: 12
+  fieldOfViewScoped: 50
+  zoomInFieldOfView: 40
 --- !u!1 &2136405122739697319
 GameObject:
   m_ObjectHideFlags: 0

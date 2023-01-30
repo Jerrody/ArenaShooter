@@ -13,7 +13,10 @@ namespace Game.Weapons
         private PlayerController _playerController;
         private PlayerAnimationController _playerAnimationController;
 
-        public bool isReloading { get; private set; }
+        public float fieldOfViewScoped => _currentWeapon.GetFieldOfViewScoped();
+        public float zoomInFieldOfView => _currentWeapon.GetZoomInFieldOfView();
+
+        private bool _isReloading;
 
         private bool _isFiring;
         private uint _previousIndex;
@@ -52,14 +55,14 @@ namespace Game.Weapons
 
             if (_currentWeapon.isEnoughAmmoInClip)
             {
-                isReloading = false;
+                _isReloading = false;
                 return;
             }
 
-            if (isReloading)
+            if (_isReloading || !_isFiring)
                 return;
 
-            isReloading = true;
+            _isReloading = true;
             if (_currentWeapon.isEnoughAmmo)
             {
                 _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
@@ -74,10 +77,10 @@ namespace Game.Weapons
 
         private void OnReload()
         {
-            if (isReloading)
+            if (_isReloading)
                 return;
 
-            isReloading = true;
+            _isReloading = true;
             if (_currentWeapon.isEnoughAmmo)
             {
                 _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
@@ -90,7 +93,7 @@ namespace Game.Weapons
 
         private void OnReloadFinished()
         {
-            isReloading = false;
+            _isReloading = false;
             _playerController.AimEvent?.Invoke(_playerController.isAiming);
         }
 
@@ -100,7 +103,7 @@ namespace Game.Weapons
                 return;
             _previousIndex = weaponIndex;
 
-            isReloading = false;
+            _isReloading = false;
             _isFiring = false;
 
             _currentWeapon.gameObject.SetActive(false);
