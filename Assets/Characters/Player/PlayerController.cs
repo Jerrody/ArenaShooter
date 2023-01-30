@@ -87,7 +87,7 @@ namespace Game.Characters.Player
             isAiming = ctx.started || ctx.performed;
 
             print($"{isAiming && !_weaponHolderController.isReloading}");
-            AimEvent?.Invoke(isAiming && !_weaponHolderController.isReloading);
+            AimEvent?.Invoke(isAiming);
 
             _speed = isAiming ? walkSpeedScoped : walkSpeed;
         }
@@ -134,7 +134,7 @@ namespace Game.Characters.Player
         {
             if (!ctx.started) return;
 
-            
+
             var weaponIndex = uint.Parse(ctx.control.name) - 1;
 
             WeaponSwitchEvent?.Invoke(weaponIndex);

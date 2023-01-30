@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af08feb5a023b1a4eace6ea885b9590d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 0
+  fireRate: 1
   maxHitscanRange: 1000
   ammo:
     maxAmmo: 36
