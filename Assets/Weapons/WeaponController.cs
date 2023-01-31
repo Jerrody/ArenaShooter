@@ -4,6 +4,14 @@ using UnityEngine;
 namespace Game.Weapons
 {
     [Serializable]
+    public enum WeaponType : uint
+    {
+        Ak,
+        Shotgun,
+        Smg,
+    }
+
+    [Serializable]
     public struct Ammo
     {
         public uint maxAmmo;
@@ -20,7 +28,8 @@ namespace Game.Weapons
         [Header("References")] [SerializeField]
         private Transform bulletSpawnPoint;
 
-        [Header("Stats")] [SerializeField] protected float fireRate;
+        [Header("Stats")] [SerializeField] protected WeaponType weaponType;
+        [SerializeField] protected float fireRate;
         [SerializeField] protected Ammo ammo;
         [SerializeField] private float maxHitscanRange = 1000.0f;
 
@@ -34,11 +43,12 @@ namespace Game.Weapons
         public bool isEnoughAmmo => _currentAmmo > 0;
         public bool isEnoughAmmoInClip => _currentAmmoClip > 0;
 
+        public bool isPickedUp;
+
         private float _nextTimeToFire;
 
         private uint _currentAmmoClip;
         private uint _currentAmmo;
-
 
         private void Awake()
         {
@@ -95,6 +105,11 @@ namespace Game.Weapons
         public float GetZoomInFieldOfView()
         {
             return zoomInFieldOfView;
+        }
+
+        public void SetAmmo(uint ammoAmount)
+        {
+            _currentAmmo = Math.Clamp(_currentAmmo + ammoAmount, 0, ammo.ammoClip - _currentAmmoClip + ammo.maxAmmo);
         }
     }
 }

@@ -8,6 +8,8 @@ namespace Game.Characters.Player
     [RequireComponent(typeof(PlayerInput), typeof(CharacterController))]
     public sealed class PlayerController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
+        public static LayerMask layerMask { get; private set; }
+
         public Action<bool> AimEvent;
 
         public event Action<bool> FireEvent;
@@ -25,9 +27,10 @@ namespace Game.Characters.Player
         [SerializeField]
         private float mouseSensitivity = 30.0f;
 
+        public WeaponHolderController weaponHolderController { get; private set; }
+
         private CharacterController _controller;
         private PlayerCameraController _cameraController;
-        private WeaponHolderController _weaponHolderController;
 
         public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
 
@@ -42,12 +45,14 @@ namespace Game.Characters.Player
 
         public void Awake()
         {
+            layerMask = LayerMask.NameToLayer("Player");
+
             Cursor.lockState = CursorLockMode.Locked;
             // Cursor.visible = false;
 
             _controller = GetComponent<CharacterController>();
             _cameraController = GetComponentInChildren<PlayerCameraController>();
-            _weaponHolderController = GetComponentInChildren<WeaponHolderController>();
+            weaponHolderController = GetComponentInChildren<WeaponHolderController>();
 
             _speed = walkSpeed;
         }
@@ -146,8 +151,8 @@ namespace Game.Characters.Player
 
         private void SetCameraFieldOfViewAndZoom()
         {
-            _cameraController.SetFieldOfViewScoped(_weaponHolderController.fieldOfViewScoped);
-            _cameraController.SetZoomInFieldOfView(_weaponHolderController.zoomInFieldOfView);
+            _cameraController.SetFieldOfViewScoped(weaponHolderController.fieldOfViewScoped);
+            _cameraController.SetZoomInFieldOfView(weaponHolderController.zoomInFieldOfView);
         }
     }
 }

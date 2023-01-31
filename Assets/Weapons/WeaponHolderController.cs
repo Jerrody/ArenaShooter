@@ -1,12 +1,15 @@
 using System;
 using System.Linq;
 using Game.Characters.Player;
+using Game.Items.Weapons;
 using UnityEngine;
 
 namespace Game.Weapons
 {
     public sealed class WeaponHolderController : MonoBehaviour
     {
+        public Action<WeaponItemController> PickedWeaponEvent;
+
         private WeaponController[] _weapons;
         private WeaponController _currentWeapon;
 
@@ -31,6 +34,8 @@ namespace Game.Weapons
             _playerController.WeaponSwitchEvent += OnWeaponSwitch;
             _playerController.AimEvent += OnAim;
 
+            PickedWeaponEvent += OnPickedWeapon;
+
             _weapons = GetComponentsInChildren<WeaponController>(true);
             foreach (var weapon in _weapons)
             {
@@ -39,9 +44,11 @@ namespace Game.Weapons
             }
 
             if ((_currentWeapon = _weapons.First()) == null)
-                throw new NullReferenceException("[ERROR]: Empty array of `Weapons`.");
+                throw new NullReferenceException("Empty array of `_weapons`.");
 
             _currentWeapon.gameObject.SetActive(true);
+            _currentWeapon.isPickedUp = true;
+            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(_currentWeapon.animator);
         }
 
         private void Update()
@@ -103,7 +110,7 @@ namespace Game.Weapons
 
         private void OnWeaponSwitch(uint weaponIndex)
         {
-            if (_previousIndex == weaponIndex)
+            if (_previousIndex == weaponIndex || !_weapons[weaponIndex].isPickedUp)
                 return;
             _previousIndex = weaponIndex;
 
@@ -121,6 +128,21 @@ namespace Game.Weapons
         {
             if (isAiming)
                 _isReloading = false;
+        }
+
+        private void OnPickedWeapon(WeaponItemController weaponItemController)
+        {
+            var weaponIndex = (uint)weaponItemController.weaponType;
+            var weapon = _weapons[weaponIndex];
+            if (weapon.isPickedUp)
+            {
+                weapon.SetAmmo(weaponItemController.ammo);
+            }
+            else
+            {
+                weapon.isPickedUp = true;
+                OnWeaponSwitch(weaponIndex);
+            }
         }
     }
 }
