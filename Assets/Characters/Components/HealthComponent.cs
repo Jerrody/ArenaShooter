@@ -1,14 +1,18 @@
+using System;
 using Game.Characters;
+using Game.Characters.Interfaces;
 using UnityEngine;
 
-namespace Game
+namespace Game.Characters.Components
 {
     public sealed class HealthComponent : MonoBehaviour, IHealable, IDamageable
     {
+        public event Action DeathEvent;
+
         [Header("Stats")] [SerializeField, Range(0.0f, float.MaxValue)]
         private float health = 100.0f;
 
-        public bool isDead => _currentHealth <= 0.0f;
+        public bool isDead => _currentHealth <= float.Epsilon;
 
         private float _currentHealth;
 
@@ -20,6 +24,9 @@ namespace Game
         public void GetDamage(float damageAmount)
         {
             _currentHealth = Mathf.Clamp(_currentHealth - damageAmount, 0.0f, health);
+
+            if (isDead)
+                DeathEvent?.Invoke();
         }
 
         public void GetHeal(float healAmount)

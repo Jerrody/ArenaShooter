@@ -29,6 +29,7 @@ namespace Game.Weapons
         private Transform bulletSpawnPoint;
 
         [Header("Stats")] [SerializeField] protected WeaponType weaponType;
+        [SerializeField] protected float damage = 30.0f;
         [SerializeField] protected float fireRate;
         [SerializeField] protected Ammo ammo;
         [SerializeField] private float maxHitscanRange = 1000.0f;

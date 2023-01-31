@@ -1,4 +1,4 @@
-namespace Game.Characters
+namespace Game.Characters.Interfaces
 {
     public interface IHealable
     {

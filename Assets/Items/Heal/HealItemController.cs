@@ -1,4 +1,5 @@
 using Game.Characters;
+using Game.Characters.Interfaces;
 using UnityEngine;
 
 namespace Game.Items

@@ -1,4 +1,5 @@
 using System;
+using Game.Characters.Components;
 using Game.Weapons;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,7 +7,7 @@ using UnityEngine.InputSystem;
 namespace Game.Characters.Player
 {
     [RequireComponent(typeof(PlayerInput), typeof(CharacterController))]
-    public sealed class PlayerController : MonoBehaviour // TODO: Make based class for the all Entities.
+    public sealed class PlayerController : EntityController // TODO: Make based class for the all Entities.
     {
         public static LayerMask layerMask { get; private set; }
 
@@ -18,8 +19,7 @@ namespace Game.Characters.Player
         public event Action<bool> RunEvent;
         public event Action<uint> WeaponSwitchEvent;
 
-        [Header("Stats")] [SerializeField] private float walkSpeed = 20.0f;
-        [SerializeField] private float runSpeed = 30.0f;
+        [Header("Stats")] [SerializeField] private float runSpeed = 30.0f;
         [SerializeField] private float walkSpeedScoped = 10.0f;
 
         [Header("Preferences")]
@@ -53,6 +53,9 @@ namespace Game.Characters.Player
             _controller = GetComponent<CharacterController>();
             _cameraController = GetComponentInChildren<PlayerCameraController>();
             weaponHolderController = GetComponentInChildren<WeaponHolderController>();
+
+            Health = GetComponent<HealthComponent>();
+            Health.DeathEvent += OnDeath;
 
             _speed = walkSpeed;
         }
@@ -153,6 +156,13 @@ namespace Game.Characters.Player
         {
             _cameraController.SetFieldOfViewScoped(weaponHolderController.fieldOfViewScoped);
             _cameraController.SetZoomInFieldOfView(weaponHolderController.zoomInFieldOfView);
+        }
+
+        private void OnDeath()
+        {
+            InputSystem.DisableDevice(Keyboard.current);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }
