@@ -161,7 +161,7 @@ namespace Game.Characters.Player
         private void OnDeath()
         {
             InputSystem.DisableDevice(Keyboard.current);
-            Cursor.lockState = CursorLockMode.None;
+            Cursor.lockState = CursorLockMode.Confined;
             Cursor.visible = true;
         }
     }
