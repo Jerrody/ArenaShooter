@@ -1,35 +1,48 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 namespace Game.Global.Data
 {
-    public enum Scopes : uint
+    public enum Scope : uint
     {
         NoScope,
-        Scope,
+        ScopeDot,
     }
 
-    public struct WeaponData
+    [System.Serializable]
+    public sealed class WeaponData
     {
-        public Scopes CurrentScope;
+        public Scope currentScope = Scope.NoScope;
 
-        public bool isScopeSet => CurrentScope == Scopes.Scope;
+        public bool isScopeSet => currentScope == Scope.ScopeDot;
+
+        public void SetScope(Scope scope)
+        {
+            currentScope = scope;
+        }
     }
 
-    public struct JsonData
+    [System.Serializable]
+    public sealed class JsonData
     {
-        public uint kills { get; private set; }
-        public uint deaths { get; private set; }
-        public uint wins { get; private set; }
-        public uint loses { get; private set; }
-        public WeaponData ak47Data { get; private set; }
-        public WeaponData shotgunData { get; private set; }
-        public WeaponData smgData { get; private set; }
-        public bool IsOpenedScope;
+        public uint kills;
+        public uint deaths;
+        public uint wins;
+        public uint killsToOpenScope = 20;
+
+        public uint loses;
+
+        [SerializeField]
+        public List<WeaponData> weaponData = new() { new WeaponData(), new WeaponData(), new WeaponData() };
+
+        public bool isOpenedScope;
 
         public void SetKills(uint kill)
         {
             kills += kill;
+            if (kills >= killsToOpenScope)
+                isOpenedScope = true;
         }
 
         public void SetDeaths(uint deaths)
@@ -47,19 +60,9 @@ namespace Game.Global.Data
             this.loses += loses;
         }
 
-        public void SetAk47Data(WeaponData ak47Data)
+        public void SetWeaponData(int weaponIndex, Scope scope)
         {
-            this.ak47Data = ak47Data;
-        }
-
-        public void SetShotgunData(WeaponData shotgunData)
-        {
-            this.shotgunData = shotgunData;
-        }
-
-        public void SetSmgData(WeaponData smgData)
-        {
-            this.smgData = smgData;
+            weaponData[weaponIndex].SetScope(scope);
         }
     }
 
@@ -69,28 +72,29 @@ namespace Game.Global.Data
         private static readonly string PathToData =
             Application.persistentDataPath + Path.AltDirectorySeparatorChar + "data.json";
 #else
-        private static readonly string PathToData = Application.dataPath + System.IO.Path.AltDirectorySeparatorChar +
-                                                    "Data/data.json";
+        private static readonly string PathToData = Application.dataPath + Path.AltDirectorySeparatorChar +
+                                                    "data.json";
 #endif
 
-        public static JsonData jsonData { get; private set; }
+        public static JsonData jsonData { get; private set; } = new();
 
-        public static void Save()
+        private static void Save()
         {
-            var savePath = PathToData;
             var json = JsonUtility.ToJson(jsonData);
 
-            var writer = new StreamWriter(savePath);
+            var writer = new StreamWriter(PathToData);
             writer.Write(json);
+            writer.Close();
         }
 
         public static void Load()
         {
-            var reader = new StreamReader(PathToData);
             if (!File.Exists(PathToData))
                 Save();
 
+            var reader = new StreamReader(PathToData);
             var json = reader.ReadToEnd();
+            reader.Close();
             jsonData = JsonUtility.FromJson<JsonData>(json);
         }
 
@@ -115,6 +119,12 @@ namespace Game.Global.Data
         public static void AddLose()
         {
             jsonData.SetLoses(jsonData.loses + 1);
+            Save();
+        }
+
+        public static void SetWeaponScope(int weaponIndex, Scope scope)
+        {
+            jsonData.SetWeaponData(weaponIndex, scope);
             Save();
         }
     }

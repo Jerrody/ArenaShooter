@@ -2089,7 +2089,7 @@ Transform:
   - {fileID: 376992673569345926}
   - {fileID: 2386649985450592452}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2818349111349389561
 Animator:
@@ -2124,6 +2124,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpawnPoint: {fileID: 0}
+  weaponType: 0
+  damage: 30
   fireRate: 20
   ammo:
     maxAmmo: 120
@@ -2131,6 +2133,7 @@ MonoBehaviour:
   maxHitscanRange: 1000
   fieldOfViewScoped: 57
   zoomInFieldOfView: 52
+  isPickedUp: 0
 --- !u!1 &8175166105362861825
 GameObject:
   m_ObjectHideFlags: 0

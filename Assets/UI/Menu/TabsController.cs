@@ -1,20 +1,36 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
-namespace Game
+namespace Game.UI.Menu.Tabs
 {
-    public class TabsController : MonoBehaviour
+    public sealed class TabsController : MonoBehaviour
     {
-        public Action<uint> TabChangedEvent;
+        public static Action<uint> TabChangeEvent;
 
-        // Start is called before the first frame update
-        void Start()
+        [SerializeField] private TabController[] tabControllers = new TabController[2];
+        private TabController _currentTabController;
+
+        private void Awake()
         {
+            TabChangeEvent += OnTabChange;
+
+            foreach (var tabController in tabControllers)
+            {
+                tabController.DisableTab();
+            }
+
+            if ((_currentTabController = tabControllers.First()) == null)
+                throw new NullReferenceException("Empty array of `_tabControllers`");
+            _currentTabController.EnableTab();
         }
 
-        // Update is called once per frame
-        void Update()
+        private void OnTabChange(uint tabIndex)
         {
+            _currentTabController.DisableTab();
+
+            _currentTabController = tabControllers[tabIndex];
+            _currentTabController.EnableTab();
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game
+namespace Game.UI
 {
     [RequireComponent(typeof(Button))]
     public abstract class ButtonController : MonoBehaviour
