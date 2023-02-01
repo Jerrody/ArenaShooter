@@ -1,4 +1,3 @@
-using Game.Characters;
 using Game.Characters.Interfaces;
 using UnityEngine;
 
@@ -15,14 +14,6 @@ namespace Game.Items
 
             Collider.isTrigger = true;
             Debug.LogWarning("`BoxCollider` of Items should be always set `IsTrigger` to `true`.");
-        }
-
-        private void Awake()
-        {
-            Collider = GetComponent<BoxCollider>();
-            Collider.isTrigger = true;
-
-            ParentTransform = GetComponentInParent<Transform>();
         }
 
         protected override void OnTriggerEnter(Collider other)

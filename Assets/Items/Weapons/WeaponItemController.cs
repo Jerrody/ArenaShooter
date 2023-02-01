@@ -21,14 +21,6 @@ namespace Game.Items.Weapons
             Debug.LogWarning("`BoxCollider` of Items should be always set `IsTrigger` to `true`.");
         }
 
-        private void Awake()
-        {
-            Collider = GetComponent<BoxCollider>();
-            Collider.isTrigger = true;
-
-            ParentTransform = GetComponentInParent<Transform>();
-        }
-
         protected override void OnTriggerEnter(Collider other)
         {
             base.OnTriggerEnter(other);

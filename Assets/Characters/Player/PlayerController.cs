@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Game.Characters.Components;
 using Game.Weapons;
 using UnityEngine;
@@ -21,6 +22,8 @@ namespace Game.Characters.Player
 
         [Header("Stats")] [SerializeField] private float runSpeed = 30.0f;
         [SerializeField] private float walkSpeedScoped = 10.0f;
+        [SerializeField] private float jumpMultiplier = 2.0f;
+        [SerializeField] private AnimationCurve jumpFallOff;
 
         [Header("Preferences")]
         // TODO: Move to the struct aka `Config or something in this way. 
@@ -36,12 +39,13 @@ namespace Game.Characters.Player
 
         public bool isAiming { get; private set; }
         private bool isRunning { get; set; }
-        public bool isJumping { get; private set; }
         public float rotation { get; private set; }
 
+        private Transform _transform;
         private Vector3 _moveDirection;
         private Vector2 _mouseDelta; // TODO: Remove it later.
         private float _speed;
+        private bool _isJumping;
 
         public void Awake()
         {
@@ -67,11 +71,13 @@ namespace Game.Characters.Player
 
         private void Update()
         {
+            _transform = transform;
+            var forwardMovement = _transform.forward * _moveDirection.z;
+            var rightMovement = _transform.right * _moveDirection.x;
+            _controller.SimpleMove(forwardMovement + rightMovement);
+
             var deltaTime = Time.deltaTime;
-
-            _controller.Move(transform.TransformDirection(_moveDirection) * (_speed * deltaTime));
-
-            rotation -= _mouseDelta.y * Time.deltaTime * mouseSensitivity;
+            rotation -= _mouseDelta.y * deltaTime * mouseSensitivity;
             rotation = Mathf.Clamp(rotation, -75.0f, 75.0f);
 
             transform.Rotate(Vector3.up * (_mouseDelta.x * deltaTime * mouseSensitivity));
@@ -85,8 +91,16 @@ namespace Game.Characters.Player
         public void Move(InputAction.CallbackContext ctx)
         {
             var direction = ctx.ReadValue<Vector2>();
-            _moveDirection.x = direction.x;
-            _moveDirection.z = direction.y;
+            _moveDirection.x = direction.x * _speed;
+            _moveDirection.z = direction.y * _speed;
+        }
+
+        public void Jump(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.started && _isJumping) return;
+
+            _isJumping = true;
+            StartCoroutine(JumpEvent());
         }
 
         public void Rotate(InputAction.CallbackContext ctx)
@@ -115,7 +129,7 @@ namespace Game.Characters.Player
             switch (isRunning)
             {
                 case true when isAiming:
-                    ZoomEvent?.Invoke(isRunning);
+                    ZoomEvent?.Invoke(!_isJumping && isRunning);
                     RunEvent?.Invoke(false);
                     break;
                 case true when !isAiming:
@@ -123,7 +137,7 @@ namespace Game.Characters.Player
                     RunEvent?.Invoke(true);
                     break;
                 case false when isAiming:
-                    ZoomEvent?.Invoke(isRunning);
+                    ZoomEvent?.Invoke(!_isJumping && isRunning);
                     break;
                 case false:
                     _speed = walkSpeed;
@@ -156,6 +170,23 @@ namespace Game.Characters.Player
         {
             _cameraController.SetFieldOfViewScoped(weaponHolderController.fieldOfViewScoped);
             _cameraController.SetZoomInFieldOfView(weaponHolderController.zoomInFieldOfView);
+        }
+
+        private IEnumerator JumpEvent()
+        {
+            _controller.slopeLimit = 90.0f;
+            var timeInAir = 0.0f;
+
+            do
+            {
+                var jumpForce = jumpFallOff.Evaluate(timeInAir);
+                _controller.Move(Vector3.up * (jumpForce * jumpMultiplier * Time.deltaTime));
+                timeInAir += Time.deltaTime;
+                yield return null;
+            } while (!_controller.isGrounded && _controller.collisionFlags != CollisionFlags.Above);
+
+            _controller.slopeLimit = 45.0f;
+            _isJumping = false;
         }
 
         private void OnDeath()

@@ -68,7 +68,6 @@ namespace Game.Weapons
             _currentAmmoClip--;
             print($"{_currentAmmoClip}");
 
-            // var ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
             if (!Physics.Raycast(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward),
                     out var raycastHit, maxHitscanRange)) return;
 

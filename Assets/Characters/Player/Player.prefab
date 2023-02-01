@@ -60,6 +60,7 @@ GameObject:
   - component: {fileID: 6946534670435262233}
   - component: {fileID: 7105692826596463514}
   - component: {fileID: 3070335741431199596}
+  - component: {fileID: 1440037781421694437}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -124,6 +125,31 @@ MonoBehaviour:
   walkSpeed: 20
   runSpeed: 30
   walkSpeedScoped: 10
+  jumpMultiplier: 10
+  jumpFallOff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1.6666666
+      outSlope: -1.6666666
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0
+      inSlope: -0.057667788
+      outSlope: -0.057667788
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.53372717
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   mouseSensitivity: 30
 --- !u!114 &7105692826596463514
 MonoBehaviour:
@@ -267,6 +293,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 9cb1e87e-f6dd-4b11-818c-46a4f9f0aa64
     m_ActionName: Movement/SwitchWeapon[/Keyboard/1,/Keyboard/2,/Keyboard/3]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6946534670435262233}
+        m_TargetAssemblyTypeName: Game.Characters.Player.PlayerController, Assembly-CSharp
+        m_MethodName: Jump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 96e676ec-98b6-408c-9756-e44bcaab23ef
+    m_ActionName: Movement/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Movement
@@ -285,6 +327,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runAnimationSpeed: 1.2
+--- !u!114 &1440037781421694437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6742586912134356357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ba0d81a043fc934186acf338b8904f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
 --- !u!1 &8550551990967328650
 GameObject:
   m_ObjectHideFlags: 0
