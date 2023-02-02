@@ -40,10 +40,10 @@ namespace Game.Characters.Player
         public bool isAiming { get; private set; }
         private bool isRunning { get; set; }
         public float rotation { get; private set; }
+        public Vector2 mouseDelta { get; private set; }
 
         private Transform _transform;
         private Vector3 _moveDirection;
-        private Vector2 _mouseDelta; // TODO: Remove it later.
         private float _speed;
         private bool _isJumping;
 
@@ -77,15 +77,15 @@ namespace Game.Characters.Player
             _controller.SimpleMove(forwardMovement + rightMovement);
 
             var deltaTime = Time.deltaTime;
-            rotation -= _mouseDelta.y * deltaTime * mouseSensitivity;
+            rotation -= mouseDelta.y * deltaTime * mouseSensitivity;
             rotation = Mathf.Clamp(rotation, -75.0f, 75.0f);
 
-            transform.Rotate(Vector3.up * (_mouseDelta.x * deltaTime * mouseSensitivity));
+            transform.Rotate(Vector3.up * (mouseDelta.x * deltaTime * mouseSensitivity));
         }
 
         private void LateUpdate()
         {
-            transform.Rotate(Vector3.up * (_mouseDelta.x * Time.deltaTime * mouseSensitivity));
+            transform.Rotate(Vector3.up * (mouseDelta.x * Time.deltaTime * mouseSensitivity));
         }
 
         public void Move(InputAction.CallbackContext ctx)
@@ -105,7 +105,7 @@ namespace Game.Characters.Player
 
         public void Rotate(InputAction.CallbackContext ctx)
         {
-            _mouseDelta = ctx.ReadValue<Vector2>();
+            mouseDelta = ctx.ReadValue<Vector2>();
         }
 
         public void Aim(InputAction.CallbackContext ctx)
@@ -124,7 +124,7 @@ namespace Game.Characters.Player
 
         public void Run(InputAction.CallbackContext ctx)
         {
-            isRunning = ctx.started || ctx.performed;
+            isRunning = (ctx.started || ctx.performed) && !weaponHolderController.isFiring;
 
             switch (isRunning)
             {

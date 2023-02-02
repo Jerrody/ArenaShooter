@@ -1,4 +1,5 @@
 using System;
+using Game.Global.Data;
 using UnityEngine;
 
 namespace Game.Weapons
@@ -22,18 +23,19 @@ namespace Game.Weapons
     [RequireComponent(typeof(Animator))]
     public class WeaponController : MonoBehaviour
     {
-        // private static readonly LayerMask BulletSpawnPoint = LayerMask.GetMask("BulletSpawnPoint");
-
         public Action ReloadFinishedEvent;
 
         [Header("References")] [SerializeField]
-        private Transform bulletSpawnPoint;
+        protected Transform bulletSpawnPoint;
 
-        [Header("Stats")] [SerializeField] protected WeaponType weaponType;
-        [SerializeField] protected float damage = 30.0f;
+        [SerializeField] protected GameObject scope;
+
+        [Header("Info")] [SerializeField] protected WeaponType weaponType;
+
+        [Header("Stats")] [SerializeField] protected float damage = 30.0f;
         [SerializeField] protected float fireRate;
+        [SerializeField] protected float maxHitscanRange = 1000.0f;
         [SerializeField] protected Ammo ammo;
-        [SerializeField] private float maxHitscanRange = 1000.0f;
 
         [Header("Field of View Stats")] [SerializeField]
         private float fieldOfViewScoped = 45.0f;
@@ -42,19 +44,24 @@ namespace Game.Weapons
 
         public Animator animator { get; private set; }
 
+        private ParticleSystem _muzzleFlesh;
+
         public bool isEnoughAmmo => _currentAmmo > 0;
         public bool isEnoughAmmoInClip => _currentAmmoClip > 0;
 
         public bool isPickedUp;
 
         private float _nextTimeToFire;
-
         private uint _currentAmmoClip;
         private uint _currentAmmo;
 
         private void Awake()
         {
             animator = GetComponent<Animator>();
+            _muzzleFlesh = GetComponentInChildren<ParticleSystem>();
+
+            if (!Data.jsonData.weaponData[(int)weaponType].isScopeSet)
+                scope.gameObject.SetActive(false);
 
             _currentAmmoClip = ammo.ammoClip;
             _currentAmmo = ammo.maxAmmo;
@@ -68,24 +75,9 @@ namespace Game.Weapons
             _currentAmmoClip--;
             print($"{_currentAmmoClip}");
 
-            if (!Physics.Raycast(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward),
-                    out var raycastHit, maxHitscanRange)) return;
+            _muzzleFlesh.Play();
 
-            Debug.DrawRay(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward) * 10.0f,
-                Color.red, 20.0f);
-        }
-
-        private void Reload()
-        {
-            if (isEnoughAmmo)
-            {
-                var previousAmmo = _currentAmmo;
-                _currentAmmo = Math.Clamp(_currentAmmo - (ammo.ammoClip - _currentAmmoClip), 0, _currentAmmo);
-                _currentAmmoClip += previousAmmo - _currentAmmo;
-                print($"{_currentAmmoClip}/{_currentAmmo}");
-            }
-
-            ReloadFinishedEvent?.Invoke();
+            FireRaycast();
         }
 
         public bool CanShoot()
@@ -111,6 +103,28 @@ namespace Game.Weapons
         public void SetAmmo(uint ammoAmount)
         {
             _currentAmmo = Math.Clamp(_currentAmmo + ammoAmount, 0, ammo.ammoClip - _currentAmmoClip + ammo.maxAmmo);
+        }
+
+        protected virtual void FireRaycast()
+        {
+            if (!Physics.Raycast(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward),
+                    out var raycastHit, maxHitscanRange)) return;
+
+            Debug.DrawRay(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward) * 10.0f,
+                Color.red, 20.0f);
+        }
+
+        private void Reload()
+        {
+            if (isEnoughAmmo)
+            {
+                var previousAmmo = _currentAmmo;
+                _currentAmmo = Math.Clamp(_currentAmmo - (ammo.ammoClip - _currentAmmoClip), 0, ammo.maxAmmo);
+                _currentAmmoClip = previousAmmo - _currentAmmo + _currentAmmoClip;
+                print($"{_currentAmmoClip}/{_currentAmmo}");
+            }
+
+            ReloadFinishedEvent?.Invoke();
         }
     }
 }

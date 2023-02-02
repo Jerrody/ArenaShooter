@@ -18,10 +18,10 @@ namespace Game.Weapons
 
         public float fieldOfViewScoped => _currentWeapon.GetFieldOfViewScoped();
         public float zoomInFieldOfView => _currentWeapon.GetZoomInFieldOfView();
+        public bool isFiring { get; private set; }
 
         private bool _isReloading;
 
-        private bool _isFiring;
         private uint _previousIndex;
 
         private void Awake()
@@ -53,13 +53,13 @@ namespace Game.Weapons
 
         private void Update()
         {
-            _playerAnimationController.TriggerFireAnimationEvent?.Invoke(_isFiring &&
+            _playerAnimationController.TriggerFireAnimationEvent?.Invoke(isFiring &&
                                                                          _currentWeapon.CanShoot());
         }
 
         private void OnFire(bool isFiring)
         {
-            _isFiring = isFiring;
+            this.isFiring = isFiring;
 
             switch (_currentWeapon.isEnoughAmmoInClip)
             {
@@ -115,7 +115,7 @@ namespace Game.Weapons
             _previousIndex = weaponIndex;
 
             _isReloading = false;
-            _isFiring = false;
+            isFiring = false;
 
             _currentWeapon.gameObject.SetActive(false);
 

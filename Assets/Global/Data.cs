@@ -36,28 +36,26 @@ namespace Game.Global.Data
         [SerializeField]
         public List<WeaponData> weaponData = new() { new WeaponData(), new WeaponData(), new WeaponData() };
 
-        public bool isOpenedScope;
+        public bool isOpenedScope => kills >= killsToOpenScope;
 
         public void SetKills(uint kill)
         {
             kills += kill;
-            if (kills >= killsToOpenScope)
-                isOpenedScope = true;
         }
 
-        public void SetDeaths(uint deaths)
+        public void SetDeaths(uint death)
         {
-            this.deaths += deaths;
+            deaths += death;
         }
 
-        public void SetWins(uint wins)
+        public void SetWins(uint win)
         {
-            this.wins += wins;
+            wins += win;
         }
 
-        public void SetLoses(uint loses)
+        public void SetLoses(uint lose)
         {
-            this.loses += loses;
+            loses += lose;
         }
 
         public void SetWeaponData(int weaponIndex, Scope scope)

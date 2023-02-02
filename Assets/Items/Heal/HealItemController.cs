@@ -1,4 +1,5 @@
 using Game.Characters.Interfaces;
+using Game.Characters.Player;
 using UnityEngine;
 
 namespace Game.Items
@@ -20,7 +21,8 @@ namespace Game.Items
         {
             base.OnTriggerEnter(other);
 
-            if (other.gameObject.TryGetComponent<IHealable>(out var healable))
+            if (other.gameObject.TryGetComponent<IHealable>(out var healable) &&
+                other.gameObject.layer == PlayerController.layerMask)
                 healable.GetHeal(healAmount);
         }
     }

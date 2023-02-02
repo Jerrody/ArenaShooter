@@ -21,6 +21,9 @@ namespace Game.UI.Menu.Tabs
 
         private void Start()
         {
+            if (!Data.jsonData.isOpenedScope)
+                scopeDot.gameObject.SetActive(false);
+
             weaponImage.sprite = weaponSprites[_currentIndex];
             selectedWeaponText.text = $"3 / {_currentIndex + 1}";
 
