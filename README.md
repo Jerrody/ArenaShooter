@@ -97,7 +97,9 @@ namespace Game.Characters.Player
         public WeaponHolderController weaponHolderController { get; private set; }
         public bool isAiming { get; private set; }
 
+        // References
         private CharacterController _controller;
+
         private float _speed;
         private bool _isJumping;
 
