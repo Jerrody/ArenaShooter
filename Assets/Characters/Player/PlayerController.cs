@@ -22,26 +22,26 @@ namespace Game.Characters.Player
 
         public Action<bool> AimEvent;
 
-        [Header("Stats")] [SerializeField] private AnimationCurve jumpFallOff;
+        [Header("Stats")]
+        [SerializeField] private AnimationCurve jumpFallOff;
         [SerializeField] private float runSpeed = 30.0f;
         [SerializeField] private float walkSpeedScoped = 10.0f;
         [SerializeField] private float jumpMultiplier = 2.0f;
 
-        [Header("Preferences")] [SerializeField]
-        private float mouseSensitivity = 15.0f;
-
-        public WeaponHolderController weaponHolderController { get; private set; }
-
-        private CharacterController _controller;
-        private PlayerCameraController _cameraController;
+        [Header("Preferences")]
+        [SerializeField] private float mouseSensitivity = 15.0f;
 
         public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
 
+        public WeaponHolderController weaponHolderController { get; private set; }
         public bool isAiming { get; private set; }
         public float rotation { get; private set; }
         public Vector2 mouseDelta { get; private set; }
 
+        private CharacterController _controller;
+        private PlayerCameraController _cameraController;
         private Transform _transform;
+
         private Vector3 _moveDirection;
         private float _speed;
         private bool _isJumping;
@@ -174,6 +174,11 @@ namespace Game.Characters.Player
             EscapePressedEvent?.Invoke();
         }
 
+        private static void OnDeath()
+        {
+            Data.AddDeath();
+        }
+
         private void SetCameraFieldOfViewAndZoom()
         {
             _cameraController.SetFieldOfViewScoped(weaponHolderController.fieldOfViewScoped);
@@ -195,11 +200,6 @@ namespace Game.Characters.Player
 
             _controller.slopeLimit = 45.0f;
             _isJumping = false;
-        }
-
-        private static void OnDeath()
-        {
-            Data.AddDeath();
         }
     }
 }
