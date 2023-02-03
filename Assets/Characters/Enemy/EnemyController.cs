@@ -16,8 +16,7 @@ namespace Characters.Enemy
         public event Action DeathEvent;
 
         [Header("References")]
-        [SerializeField]
-        private HitAreaComponent hitArea;
+        [SerializeField] private HitAreaComponent hitArea;
 
         [Header("Layers")]
         [SerializeField] private LayerMask targetLayer;

@@ -4,6 +4,5 @@ namespace Game.Global
     {
         Menu,
         GameLevel,
-        TestLevel,
     }
 }

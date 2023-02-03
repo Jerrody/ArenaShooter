@@ -20,7 +20,6 @@ namespace Game.Weapons
         public uint ammoClip;
     }
 
-    // TODO: Make WeaponController derivable for the children and create an interface.
     [RequireComponent(typeof(Animator))]
     public class WeaponController : MonoBehaviour
     {
