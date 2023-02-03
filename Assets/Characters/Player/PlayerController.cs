@@ -98,7 +98,7 @@ namespace Game.Characters.Player
 
         public void Jump(InputAction.CallbackContext ctx)
         {
-            if (!ctx.started && _isJumping) return;
+            if (!ctx.started || _isJumping) return;
 
             _isJumping = true;
             StartCoroutine(JumpEvent());
