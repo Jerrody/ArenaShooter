@@ -88,7 +88,8 @@ namespace Game.Characters.Player
         [SerializeField] private AnimationCurve jumpFallOff;
         [SerializeField] private float runSpeed = 30.0f;
 
-        [Header("Preferences")] [SerializeField]
+        [Header("Preferences")]
+        [SerializeField]
         private float mouseSensitivity = 15.0f;
 
         public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
