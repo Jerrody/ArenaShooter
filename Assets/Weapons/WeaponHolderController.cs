@@ -9,15 +9,17 @@ namespace Game.Weapons
     public sealed class WeaponHolderController : MonoBehaviour
     {
         public Action<WeaponItemController> PickedWeaponEvent;
+        public Action WeaponSwitchEvent;
 
-        private WeaponController[] _weapons;
-        private WeaponController _currentWeapon;
+        public WeaponController[] weapons { get; private set; }
+        public WeaponController currentWeapon { get; private set; }
 
         private PlayerController _playerController;
         private PlayerAnimationController _playerAnimationController;
 
-        public float fieldOfViewScoped => _currentWeapon.GetFieldOfViewScoped();
-        public float zoomInFieldOfView => _currentWeapon.GetZoomInFieldOfView();
+        public float fieldOfViewScoped => currentWeapon.GetFieldOfViewScoped();
+        public float zoomInFieldOfView => currentWeapon.GetZoomInFieldOfView();
+
         public bool isFiring { get; private set; }
 
         private bool _isReloading;
@@ -36,32 +38,37 @@ namespace Game.Weapons
 
             PickedWeaponEvent += OnPickedWeapon;
 
-            _weapons = GetComponentsInChildren<WeaponController>(true);
-            foreach (var weapon in _weapons)
+            weapons = GetComponentsInChildren<WeaponController>(true);
+            foreach (var weapon in weapons)
             {
                 weapon.ReloadFinishedEvent += OnReloadFinished;
                 weapon.gameObject.SetActive(false);
             }
 
-            if ((_currentWeapon = _weapons.First()) == null)
+            if ((currentWeapon = weapons.First()) == null)
                 throw new NullReferenceException("Empty array of `_weapons`.");
 
-            _currentWeapon.gameObject.SetActive(true);
-            _currentWeapon.isPickedUp = true;
-            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(_currentWeapon.animator);
+            currentWeapon.gameObject.SetActive(true);
+            currentWeapon.isPickedUp = true;
+            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(currentWeapon.animator);
         }
 
         private void Update()
         {
             _playerAnimationController.TriggerFireAnimationEvent?.Invoke(isFiring &&
-                                                                         _currentWeapon.CanShoot());
+                                                                         currentWeapon.CanShoot());
         }
 
-        private void OnFire(bool isFiring)
+        public bool IsPickedWeaponByIndex(uint weaponIndex)
         {
-            this.isFiring = isFiring;
+            return weapons[weaponIndex].isPickedUp;
+        }
 
-            switch (_currentWeapon.isEnoughAmmoInClip)
+        private void OnFire(bool isPressedFire)
+        {
+            isFiring = isPressedFire;
+
+            switch (currentWeapon.isEnoughAmmoInClip)
             {
                 case false when !isFiring:
                     return;
@@ -74,7 +81,7 @@ namespace Game.Weapons
                 return;
 
             _isReloading = true;
-            if (_currentWeapon.isEnoughAmmo)
+            if (currentWeapon.isEnoughAmmo)
             {
                 _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
             }
@@ -92,7 +99,7 @@ namespace Game.Weapons
                 return;
 
             _isReloading = true;
-            if (_currentWeapon.isEnoughAmmo)
+            if (currentWeapon.isEnoughAmmo)
             {
                 _playerAnimationController.TriggerReloadAmmoAnimationEvent?.Invoke();
             }
@@ -110,18 +117,20 @@ namespace Game.Weapons
 
         private void OnWeaponSwitch(uint weaponIndex)
         {
-            if (_previousIndex == weaponIndex || !_weapons[weaponIndex].isPickedUp)
+            if (_previousIndex == weaponIndex || !IsPickedWeaponByIndex(weaponIndex))
                 return;
             _previousIndex = weaponIndex;
 
             _isReloading = false;
             isFiring = false;
 
-            _currentWeapon.gameObject.SetActive(false);
+            currentWeapon.gameObject.SetActive(false);
 
-            _currentWeapon = _weapons[weaponIndex];
-            _currentWeapon.gameObject.SetActive(true);
-            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(_currentWeapon.animator);
+            currentWeapon = weapons[weaponIndex];
+            currentWeapon.gameObject.SetActive(true);
+
+            _playerAnimationController.TriggerWeaponSwitchEvent?.Invoke(currentWeapon.animator);
+            WeaponSwitchEvent?.Invoke();
         }
 
         private void OnAim(bool isAiming)
@@ -133,7 +142,7 @@ namespace Game.Weapons
         private void OnPickedWeapon(WeaponItemController weaponItemController)
         {
             var weaponIndex = (uint)weaponItemController.weaponType;
-            var weapon = _weapons[weaponIndex];
+            var weapon = weapons[weaponIndex];
             if (weapon.isPickedUp)
             {
                 weapon.SetAmmo(weaponItemController.ammo);

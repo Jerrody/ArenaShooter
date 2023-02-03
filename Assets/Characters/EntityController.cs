@@ -8,6 +8,6 @@ namespace Game.Characters
     {
         [Header("Stats")] [SerializeField] protected float walkSpeed = 20.0f;
 
-        protected HealthComponent Health;
+        public HealthComponent health { get; protected set; }
     }
 }

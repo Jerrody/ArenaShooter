@@ -40,22 +40,22 @@ namespace Game.Global.Data
 
         public void SetKills(uint kill)
         {
-            kills += kill;
+            kills = kill;
         }
 
         public void SetDeaths(uint death)
         {
-            deaths += death;
+            deaths = death;
         }
 
         public void SetWins(uint win)
         {
-            wins += win;
+            wins = win;
         }
 
         public void SetLoses(uint lose)
         {
-            loses += lose;
+            loses = lose;
         }
 
         public void SetWeaponData(int weaponIndex, Scope scope)

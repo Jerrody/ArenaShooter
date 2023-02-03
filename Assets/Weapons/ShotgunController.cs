@@ -1,3 +1,4 @@
+using Game.Characters.Interfaces;
 using UnityEngine;
 
 namespace Game.Weapons
@@ -17,8 +18,8 @@ namespace Game.Weapons
                 if (!Physics.Raycast(bulletSpawnPoint.position, direction,
                         out var raycastHit, maxHitscanRange)) return;
 
-                Debug.DrawRay(bulletSpawnPoint.position, direction * 10.0f,
-                    Color.red, 20.0f);
+                if (raycastHit.collider.gameObject.TryGetComponent<IDamageable>(out var damageable))
+                    damageable.TakeDamage(damage);
             }
         }
 

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using Game.Characters.Components;
+using Game.Gamemode.Wave;
+using Game.Global.Data;
 using Game.Weapons;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,6 +13,8 @@ namespace Game.Characters.Player
     public sealed class PlayerController : EntityController // TODO: Make based class for the all Entities.
     {
         public static LayerMask layerMask { get; private set; }
+
+        public event Action EscapePressedEvent;
 
         public Action<bool> AimEvent;
 
@@ -25,9 +29,7 @@ namespace Game.Characters.Player
         [SerializeField] private float jumpMultiplier = 2.0f;
         [SerializeField] private AnimationCurve jumpFallOff;
 
-        [Header("Preferences")]
-        // TODO: Move to the struct aka `Config or something in this way. 
-        [SerializeField]
+        [Header("Preferences")] [SerializeField]
         private float mouseSensitivity = 30.0f;
 
         public WeaponHolderController weaponHolderController { get; private set; }
@@ -51,15 +53,18 @@ namespace Game.Characters.Player
         {
             layerMask = LayerMask.NameToLayer("Player");
 
+            InputSystem.EnableDevice(Keyboard.current);
             Cursor.lockState = CursorLockMode.Locked;
-            // Cursor.visible = false;
+            Cursor.visible = false;
 
             _controller = GetComponent<CharacterController>();
             _cameraController = GetComponentInChildren<PlayerCameraController>();
             weaponHolderController = GetComponentInChildren<WeaponHolderController>();
 
-            Health = GetComponent<HealthComponent>();
-            Health.DeathEvent += OnDeath;
+            health = GetComponent<HealthComponent>();
+            health.DeathEvent += OnDeath;
+
+            WaveManager.WavesEndEvent += OnWin;
 
             _speed = walkSpeed;
         }
@@ -166,6 +171,37 @@ namespace Game.Characters.Player
             SetCameraFieldOfViewAndZoom();
         }
 
+        public void Escape(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.started) return;
+
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                Pause();
+            }
+            else
+            {
+                Unpause();
+            }
+
+            EscapePressedEvent?.Invoke();
+        }
+
+        private static void Pause()
+        {
+            InputSystem.DisableDevice(Keyboard.current);
+            Time.timeScale = 0.0f;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
+
+        private static void Unpause()
+        {
+            Time.timeScale = 1.0f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         private void SetCameraFieldOfViewAndZoom()
         {
             _cameraController.SetFieldOfViewScoped(weaponHolderController.fieldOfViewScoped);
@@ -189,11 +225,15 @@ namespace Game.Characters.Player
             _isJumping = false;
         }
 
-        private void OnDeath()
+        private static void OnDeath()
         {
-            InputSystem.DisableDevice(Keyboard.current);
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
+            Data.AddDeath();
+            Pause();
+        }
+
+        private static void OnWin()
+        {
+            Pause();
         }
     }
 }

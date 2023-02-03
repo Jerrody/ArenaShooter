@@ -2029,7 +2029,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 4853949522922249063}
   scope: {fileID: 3692706389473866246}
   weaponType: 0
-  damage: 30
+  damage: 50
   fireRate: 15
   maxHitscanRange: 1000
   ammo:

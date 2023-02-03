@@ -2,7 +2,7 @@
     "name": "PlayerInput",
     "maps": [
         {
-            "name": "Movement",
+            "name": "Controls",
             "id": "d334257f-c7a1-4daf-a4f5-dd2d2a34fa7b",
             "actions": [
                 {
@@ -72,6 +72,15 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "96e676ec-98b6-408c-9756-e44bcaab23ef",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "40febdb9-3ce5-490f-b6a9-1b28cf8ec590",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -232,32 +241,15 @@
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Menu",
-            "id": "418b2a84-a326-41d1-9c4c-b6dc9a82fcb7",
-            "actions": [
-                {
-                    "name": "New action",
-                    "type": "Button",
-                    "id": "c080ac1f-0ee6-4f15-8f5c-13663c689b74",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
+                },
                 {
                     "name": "",
-                    "id": "c6d6465c-7a44-4193-9b9e-9b0a8c8902dd",
-                    "path": "",
+                    "id": "1730aa4b-927d-41a6-9fae-f36497fa56ca",
+                    "path": "<Keyboard>/f1",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Escape",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,4 +1,5 @@
 using System;
+using Game.Characters.Interfaces;
 using Game.Global.Data;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ namespace Game.Weapons
     public class WeaponController : MonoBehaviour
     {
         public Action ReloadFinishedEvent;
+        public Action FireEvent;
 
         [Header("References")] [SerializeField]
         protected Transform bulletSpawnPoint;
@@ -46,25 +48,30 @@ namespace Game.Weapons
 
         private ParticleSystem _muzzleFlesh;
 
-        public bool isEnoughAmmo => _currentAmmo > 0;
-        public bool isEnoughAmmoInClip => _currentAmmoClip > 0;
+        public uint currentAmmoClip { get; private set; }
+        public uint currentAmmo { get; private set; }
+
+        public WeaponType type => weaponType;
+        public bool isEnoughAmmo => currentAmmo > 0;
+        public bool isEnoughAmmoInClip => currentAmmoClip > 0;
 
         public bool isPickedUp;
 
         private float _nextTimeToFire;
-        private uint _currentAmmoClip;
-        private uint _currentAmmo;
 
         private void Awake()
         {
             animator = GetComponent<Animator>();
             _muzzleFlesh = GetComponentInChildren<ParticleSystem>();
 
+            currentAmmoClip = ammo.ammoClip;
+            currentAmmo = ammo.maxAmmo;
+        }
+
+        private void Start()
+        {
             if (!Data.jsonData.weaponData[(int)weaponType].isScopeSet)
                 scope.gameObject.SetActive(false);
-
-            _currentAmmoClip = ammo.ammoClip;
-            _currentAmmo = ammo.maxAmmo;
         }
 
         public void Fire()
@@ -72,12 +79,12 @@ namespace Game.Weapons
             if (!isEnoughAmmoInClip)
                 return;
 
-            _currentAmmoClip--;
-            print($"{_currentAmmoClip}");
+            currentAmmoClip--;
 
             _muzzleFlesh.Play();
 
             FireRaycast();
+            FireEvent.Invoke();
         }
 
         public bool CanShoot()
@@ -102,7 +109,7 @@ namespace Game.Weapons
 
         public void SetAmmo(uint ammoAmount)
         {
-            _currentAmmo = Math.Clamp(_currentAmmo + ammoAmount, 0, ammo.ammoClip - _currentAmmoClip + ammo.maxAmmo);
+            currentAmmo = Math.Clamp(currentAmmo + ammoAmount, 0, ammo.ammoClip - currentAmmoClip + ammo.maxAmmo);
         }
 
         protected virtual void FireRaycast()
@@ -110,18 +117,17 @@ namespace Game.Weapons
             if (!Physics.Raycast(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward),
                     out var raycastHit, maxHitscanRange)) return;
 
-            Debug.DrawRay(bulletSpawnPoint.position, transform.TransformDirection(Vector3.forward) * 10.0f,
-                Color.red, 20.0f);
+            if (raycastHit.collider.gameObject.TryGetComponent<IDamageable>(out var damageable))
+                damageable.TakeDamage(damage);
         }
 
         private void Reload()
         {
             if (isEnoughAmmo)
             {
-                var previousAmmo = _currentAmmo;
-                _currentAmmo = Math.Clamp(_currentAmmo - (ammo.ammoClip - _currentAmmoClip), 0, ammo.maxAmmo);
-                _currentAmmoClip = previousAmmo - _currentAmmo + _currentAmmoClip;
-                print($"{_currentAmmoClip}/{_currentAmmo}");
+                var previousAmmo = currentAmmo;
+                currentAmmo = (uint)Math.Clamp((int)currentAmmo - (ammo.ammoClip - currentAmmoClip), 0, currentAmmo);
+                currentAmmoClip = previousAmmo - currentAmmo + currentAmmoClip;
             }
 
             ReloadFinishedEvent?.Invoke();

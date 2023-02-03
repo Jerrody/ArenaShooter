@@ -23,8 +23,7 @@ namespace Game.Characters.Player
 
         private void Awake()
         {
-            _animator =
-                GetComponentInChildren<Animator>(); // Move logic of getting animator to the `WeaponHolderController`.
+            _animator = GetComponentInChildren<Animator>();
             _playerController = GetComponentInParent<PlayerController>();
             _playerController.RunEvent += OnRun;
 

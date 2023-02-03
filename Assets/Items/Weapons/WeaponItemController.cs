@@ -1,4 +1,3 @@
-using System;
 using Game.Characters.Player;
 using Game.Weapons;
 using UnityEngine;

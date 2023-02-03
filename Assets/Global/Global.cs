@@ -6,6 +6,7 @@ namespace Game.Global
         {
             Menu,
             GameLevel,
+            TestLevel, // TODO: Remove later.
         }
     }
 }
