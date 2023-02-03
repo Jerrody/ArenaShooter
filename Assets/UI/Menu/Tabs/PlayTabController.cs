@@ -25,7 +25,7 @@ namespace Game.UI.Menu.Tabs
             var deaths = Data.jsonData.deaths;
 
             var winsWithSingle = (float)wins;
-            var losesWithSingle = (float)wins;
+            var losesWithSingle = (float)loses;
             var winrate = winsWithSingle /
                           (winsWithSingle + losesWithSingle == 0 ? 1 : winsWithSingle + losesWithSingle);
 
