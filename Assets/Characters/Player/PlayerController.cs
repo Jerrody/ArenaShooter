@@ -13,23 +13,22 @@ namespace Game.Characters.Player
     {
         public static LayerMask layerMask { get; private set; }
 
-        public event Action EscapePressedEvent;
-
         public event Action<bool> FireEvent;
         public event Action ReloadEvent;
         public event Action<bool> ZoomEvent;
         public event Action<bool> RunEvent;
         public event Action<uint> WeaponSwitchEvent;
+        public event Action EscapePressedEvent;
 
         public Action<bool> AimEvent;
 
-        [Header("Stats")] [SerializeField] private float runSpeed = 30.0f;
+        [Header("Stats")] [SerializeField] private AnimationCurve jumpFallOff;
+        [SerializeField] private float runSpeed = 30.0f;
         [SerializeField] private float walkSpeedScoped = 10.0f;
         [SerializeField] private float jumpMultiplier = 2.0f;
-        [SerializeField] private AnimationCurve jumpFallOff;
 
         [Header("Preferences")] [SerializeField]
-        private float mouseSensitivity = 30.0f;
+        private float mouseSensitivity = 15.0f;
 
         public WeaponHolderController weaponHolderController { get; private set; }
 
@@ -39,7 +38,6 @@ namespace Game.Characters.Player
         public bool isMoving => _controller.velocity.z is > float.Epsilon or < -float.Epsilon;
 
         public bool isAiming { get; private set; }
-        private bool isRunning { get; set; }
         public float rotation { get; private set; }
         public Vector2 mouseDelta { get; private set; }
 
@@ -47,6 +45,7 @@ namespace Game.Characters.Player
         private Vector3 _moveDirection;
         private float _speed;
         private bool _isJumping;
+        private bool _isRunning;
 
         public void Awake()
         {
@@ -126,12 +125,12 @@ namespace Game.Characters.Player
 
         public void Run(InputAction.CallbackContext ctx)
         {
-            isRunning = (ctx.started || ctx.performed) && !weaponHolderController.isFiring;
+            _isRunning = (ctx.started || ctx.performed) && !weaponHolderController.isFiring;
 
-            switch (isRunning)
+            switch (_isRunning)
             {
                 case true when isAiming:
-                    ZoomEvent?.Invoke(!_isJumping && isRunning);
+                    ZoomEvent?.Invoke(!_isJumping && _isRunning);
                     RunEvent?.Invoke(false);
                     break;
                 case true when !isAiming:
@@ -139,7 +138,7 @@ namespace Game.Characters.Player
                     RunEvent?.Invoke(true);
                     break;
                 case false when isAiming:
-                    ZoomEvent?.Invoke(!_isJumping && isRunning);
+                    ZoomEvent?.Invoke(!_isJumping && _isRunning);
                     break;
                 case false:
                     _speed = walkSpeed;
