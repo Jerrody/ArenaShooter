@@ -10,28 +10,30 @@ namespace Characters.Enemy
 {
     public sealed class EnemyController : EntityController
     {
+        public static LayerMask layerMask { get; private set; }
+
         public event Action AttackEvent;
         public event Action DeathEvent;
 
-        public static LayerMask layerMask { get; private set; }
-
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private HitAreaComponent hitArea;
 
-        [Header("Layers")] [SerializeField] private LayerMask targetLayer;
+        [Header("Layers")]
+        [SerializeField] private LayerMask targetLayer;
 
-        [Header("Stats")] [SerializeField] private float timeBetweenAttacks;
+        [Header("Stats")]
+        [SerializeField] private float timeBetweenAttacks;
         [SerializeField] private float attackRange = 2.0f;
+
+        public float velocity => _agent.velocity.z;
 
         public Transform target;
 
         private NavMeshAgent _agent;
         private EnemyAnimationController _enemyAnimationController;
 
-        public float velocity => _agent.velocity.z;
-
         private bool _alreadyAttacked;
-
         private bool _targetInAttackRange;
 
         private void Awake()

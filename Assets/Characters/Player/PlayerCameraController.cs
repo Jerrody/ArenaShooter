@@ -5,17 +5,14 @@ namespace Game.Characters.Player
 {
     public sealed class PlayerCameraController : MonoBehaviour
     {
-        [Header("Field of View Stats")] [SerializeField]
-        private float fieldOfView = 75.0f;
-
+        [Header("Field of View Stats")]
+        [SerializeField] private float fieldOfView = 75.0f;
         [SerializeField] private float fieldOfViewScoped = 45.0f;
         [SerializeField] public float zoomInFieldOfView = 35.0f;
-
         [SerializeField] private float scopeSpeed = 5.0f;
 
-        [Header("Zoom Stats")] [SerializeField]
-        private float zoomTime = 3.5f;
-
+        [Header("Zoom Stats")]
+        [SerializeField] private float zoomTime = 3.5f;
         [SerializeField] private float zoomResetTime = 2.0f;
 
         private PlayerController _playerController;
@@ -66,6 +63,16 @@ namespace Game.Characters.Player
             }
         }
 
+        public void SetFieldOfViewScoped(float newFieldOfViewScoped)
+        {
+            fieldOfViewScoped = newFieldOfViewScoped;
+        }
+
+        public void SetZoomInFieldOfView(float newZoomInFieldOfView)
+        {
+            zoomInFieldOfView = newZoomInFieldOfView;
+        }
+
         private void ZoomOut()
         {
             _zoomTimer = null;
@@ -75,16 +82,6 @@ namespace Game.Characters.Player
                 _targetFieldOfView = fieldOfViewScoped;
 
             Timer.Create(() => _canZoom = !_canZoom, zoomResetTime);
-        }
-
-        public void SetFieldOfViewScoped(float newFieldOfViewScoped)
-        {
-            fieldOfViewScoped = newFieldOfViewScoped;
-        }
-
-        public void SetZoomInFieldOfView(float newZoomInFieldOfView)
-        {
-            zoomInFieldOfView = newZoomInFieldOfView;
         }
     }
 }

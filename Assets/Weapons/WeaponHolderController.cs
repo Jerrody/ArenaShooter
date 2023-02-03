@@ -11,19 +11,17 @@ namespace Game.Weapons
         public Action<WeaponItemController> PickedWeaponEvent;
         public Action WeaponSwitchEvent;
 
+        public float fieldOfViewScoped => currentWeapon.GetFieldOfViewScoped();
+        public float zoomInFieldOfView => currentWeapon.GetZoomInFieldOfView();
+
         public WeaponController[] weapons { get; private set; }
         public WeaponController currentWeapon { get; private set; }
+        public bool isFiring { get; private set; }
 
         private PlayerController _playerController;
         private PlayerAnimationController _playerAnimationController;
 
-        public float fieldOfViewScoped => currentWeapon.GetFieldOfViewScoped();
-        public float zoomInFieldOfView => currentWeapon.GetZoomInFieldOfView();
-
-        public bool isFiring { get; private set; }
-
         private bool _isReloading;
-
         private uint _previousIndex;
 
         private void Awake()

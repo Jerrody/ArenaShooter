@@ -29,9 +29,8 @@ namespace Game.Global.Data
         public uint kills;
         public uint deaths;
         public uint wins;
-        public uint killsToOpenScope = 10;
-
         public uint loses;
+        public uint killsToOpenScope = 10;
 
         [SerializeField]
         public List<WeaponData> weaponData = new() { new WeaponData(), new WeaponData(), new WeaponData() };
@@ -76,6 +75,20 @@ namespace Game.Global.Data
 
         public static JsonData jsonData { get; private set; } = new();
 
+        public static void Load()
+        {
+            if (!File.Exists(PathToData))
+            {
+                File.Create(PathToData).Close();
+                Save();
+            }
+
+            var reader = new StreamReader(PathToData);
+            var json = reader.ReadToEnd();
+            reader.Close();
+            jsonData = JsonUtility.FromJson<JsonData>(json);
+        }
+
         private static void Save()
         {
             var json = JsonUtility.ToJson(jsonData);
@@ -83,17 +96,6 @@ namespace Game.Global.Data
             var writer = new StreamWriter(PathToData);
             writer.Write(json);
             writer.Close();
-        }
-
-        public static void Load()
-        {
-            if (!File.Exists(PathToData))
-                Save();
-
-            var reader = new StreamReader(PathToData);
-            var json = reader.ReadToEnd();
-            reader.Close();
-            jsonData = JsonUtility.FromJson<JsonData>(json);
         }
 
         public static void AddKill()

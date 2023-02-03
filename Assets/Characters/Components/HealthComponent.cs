@@ -9,10 +9,12 @@ namespace Game.Characters.Components
         public event Action DeathEvent;
         public event Action<float, float> OnHealthChange;
 
-        [Header("Stats")] [SerializeField, Range(0.0f, float.MaxValue)]
+        [Header("Stats")]
+        [SerializeField, Range(0.0f, float.MaxValue)]
         private float health = 100.0f;
 
         private bool isDead => _currentHealth <= float.Epsilon;
+
         private float _currentHealth;
 
         private void Awake()

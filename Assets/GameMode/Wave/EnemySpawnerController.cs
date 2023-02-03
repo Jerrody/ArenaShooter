@@ -10,10 +10,11 @@ namespace Game.Gamemode.Wave
         public event Action WaveEndEvent;
         public event Action EnemyDeathEvent;
 
-        [Header("References")] [SerializeField]
-        private EnemyController enemy;
+        [Header("References")]
+        [SerializeField] private EnemyController enemy;
 
-        [Header("Stats")] [SerializeField] private float spawnTime = 1.0f;
+        [Header("Stats")]
+        [SerializeField] private float spawnTime = 1.0f;
 
         private uint _enemyCount;
         private uint _spawnedEnemiesCount = 1;

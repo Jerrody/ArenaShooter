@@ -5,7 +5,8 @@ namespace Game.Weapons
 {
     public sealed class ShotgunController : WeaponController
     {
-        [Header("Stats")] [SerializeField] private uint fractionPerFire = 6;
+        [Header("Stats")]
+        [SerializeField] private uint fractionPerFire = 6;
         [SerializeField] private Vector3 bulletSpread = new(0.1f, 0.1f, 0.1f);
 
         private Vector3 _forwardDirection;

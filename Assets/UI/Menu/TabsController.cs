@@ -8,7 +8,9 @@ namespace Game.UI.Menu.Tabs
     {
         public Action<uint> TabChangeEvent;
 
+        [Header("References")]
         [SerializeField] private TabController[] tabControllers = new TabController[2];
+        
         private TabController _currentTabController;
 
         private void Awake()

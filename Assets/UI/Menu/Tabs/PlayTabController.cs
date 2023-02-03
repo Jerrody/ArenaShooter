@@ -7,15 +7,13 @@ namespace Game.UI.Menu.Tabs
 {
     public sealed class PlayTabController : TabController
     {
-        [Header("References")] [SerializeField]
-        private TMP_Text winsText;
-
+        [Header("References")]
+        [SerializeField] private TMP_Text winsText;
         [SerializeField] private TMP_Text losesText;
         [SerializeField] private TMP_Text winrateText;
         [SerializeField] private TMP_Text killsText;
         [SerializeField] private TMP_Text deathsText;
         [SerializeField] private TMP_Text kdText;
-
         [SerializeField] private TMP_Text killsProgressBar;
         [SerializeField] private RectTransform progressBarTransform;
 

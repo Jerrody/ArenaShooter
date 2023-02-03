@@ -12,10 +12,11 @@ namespace Game.UI.Menu.Tabs
 
     public abstract class TabController : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
-        private GameObject tab;
+        [Header("References")]
+        [SerializeField] private GameObject tab;
 
-        [Header("Info")] [SerializeField] protected TabType tabType;
+        [Header("Info")]
+        [SerializeField] protected TabType tabType;
 
         private TabsController _tabsController;
 

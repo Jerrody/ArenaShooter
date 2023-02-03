@@ -9,9 +9,8 @@ namespace Game.UI.Menu.Tabs
 {
     public sealed class CustomizeTabController : TabController
     {
-        [Header("References")] [SerializeField]
-        private TMP_Text selectedWeaponText;
-
+        [Header("References")]
+        [SerializeField] private TMP_Text selectedWeaponText;
         [SerializeField] private Image weaponImage;
         [SerializeField] private List<Sprite> weaponSprites = new(3);
         [SerializeField] private Image noScope;

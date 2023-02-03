@@ -5,12 +5,12 @@ namespace Characters.Enemy
 {
     public sealed class EnemyAnimationController : MonoBehaviour
     {
-        public Action AttackAnimationEndEvent;
-        public Action DeathAnimationEndEvent;
-
         private static readonly int VelocityParam = Animator.StringToHash("Velocity");
         private static readonly int AttackParam = Animator.StringToHash("Attack");
         private static readonly int DeadParam = Animator.StringToHash("Dead");
+
+        public Action AttackAnimationEndEvent;
+        public Action DeathAnimationEndEvent;
 
         private EnemyController _enemyController;
         private Animator _animator;

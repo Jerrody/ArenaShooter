@@ -15,16 +15,16 @@ namespace Game.UI.HUD
         private const string WinText = "WIN!";
         private const string LoseText = "You're Dead!";
 
-        [Header("References")] [SerializeField]
-        private TMP_Text[] weaponSlotsText = new TMP_Text[3];
-
+        [Header("References")]
+        [SerializeField] private TMP_Text[] weaponSlotsText = new TMP_Text[3];
         [SerializeField] private TMP_Text weaponAmmoText;
         [SerializeField] private TMP_Text endOfMatchText;
         [SerializeField] private Image healthBar;
         [SerializeField] private GameObject escapeMenu;
         [SerializeField] private GameObject resumeButton;
 
-        [Header("Stats")] [SerializeField] private float healthReduceSpeed = 2.0f;
+        [Header("Stats")]
+        [SerializeField] private float healthReduceSpeed = 2.0f;
 
         private PlayerController _playerController;
         private WeaponHolderController _weaponHolderController;
@@ -83,24 +83,6 @@ namespace Game.UI.HUD
                 Mathf.MoveTowards(healthBar.fillAmount, _currentHealth, healthReduceSpeed * Time.deltaTime);
         }
 
-        private void SetNewWeaponSlotIndex(uint weaponIndex)
-        {
-            _currentActiveWeaponSlot.fontStyle = FontStyles.Normal;
-
-            _currentActiveWeaponSlot = weaponSlotsText[weaponIndex];
-            if (Math.Abs(_currentActiveWeaponSlot.color.a - 1.0f) > float.Epsilon)
-                SetWeaponSlotSetAlphaToOne();
-
-            _currentActiveWeaponSlot.fontStyle = FontStyles.Bold;
-        }
-
-        private void SetWeaponSlotSetAlphaToOne()
-        {
-            var color = _currentActiveWeaponSlot.color;
-            color.a = 1.0f;
-            _currentActiveWeaponSlot.color = color;
-        }
-
         public void OnEscapePressed()
         {
             escapeMenu.gameObject.SetActive(!escapeMenu.gameObject.activeSelf);
@@ -148,6 +130,24 @@ namespace Game.UI.HUD
         {
             ShowEndOfMatch(WinText);
             Data.AddWin();
+        }
+
+        private void SetNewWeaponSlotIndex(uint weaponIndex)
+        {
+            _currentActiveWeaponSlot.fontStyle = FontStyles.Normal;
+
+            _currentActiveWeaponSlot = weaponSlotsText[weaponIndex];
+            if (Math.Abs(_currentActiveWeaponSlot.color.a - 1.0f) > float.Epsilon)
+                SetWeaponSlotSetAlphaToOne();
+
+            _currentActiveWeaponSlot.fontStyle = FontStyles.Bold;
+        }
+
+        private void SetWeaponSlotSetAlphaToOne()
+        {
+            var color = _currentActiveWeaponSlot.color;
+            color.a = 1.0f;
+            _currentActiveWeaponSlot.color = color;
         }
 
         private void ShowEndOfMatch(string textToDisplay)

@@ -5,7 +5,8 @@ namespace Game.UI.Buttons
 {
     public sealed class PlayButtonController : ButtonController
     {
-        [Header("Info")] [SerializeField] private Global.Global.Scenes sceneToOpen;
+        [Header("Info")]
+        [SerializeField] private Global.Scenes sceneToOpen;
 
         protected override void OnClick()
         {

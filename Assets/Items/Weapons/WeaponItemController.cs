@@ -6,10 +6,12 @@ namespace Game.Items.Weapons
 {
     public sealed class WeaponItemController : ItemController
     {
-        [Header("Stats")] [SerializeField] private uint ammoAmount = 30;
+        [Header("Stats")]
+        [SerializeField] private uint ammoAmount = 30;
         [SerializeField] private WeaponType weaponName;
 
         public WeaponType weaponType => weaponName;
+
         public uint ammo => ammoAmount;
 
         private void OnValidate()

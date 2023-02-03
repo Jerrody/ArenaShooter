@@ -7,7 +7,8 @@ namespace Game.Items
     [RequireComponent(typeof(BoxCollider))]
     public sealed class HealItemController : ItemController
     {
-        [Header("Stats")] [SerializeField] private float healAmount;
+        [Header("Stats")]
+        [SerializeField] private float healAmount;
 
         private void OnValidate()
         {

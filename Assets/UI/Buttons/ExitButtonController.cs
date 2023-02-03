@@ -8,8 +8,9 @@ namespace Game.UI.Buttons
 {
     public sealed class ExitButtonController : ButtonController
     {
-        [Header("Info")] [SerializeField] private bool doExitFromApplication;
-        [SerializeField] private Global.Global.Scenes sceneToOpen;
+        [Header("Info")]
+        [SerializeField] private bool doExitFromApplication;
+        [SerializeField] private Global.Scenes sceneToOpen;
 
         protected override void OnClick()
         {

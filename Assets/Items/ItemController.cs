@@ -6,12 +6,13 @@ namespace Game.Items
     [RequireComponent(typeof(BoxCollider), typeof(MeshRenderer), typeof(MeshFilter))]
     public abstract class ItemController : MonoBehaviour
     {
-        [Header("Stats")] [SerializeField] private float resetTime = 5.0f;
-
-        protected BoxCollider Collider;
+        [Header("Stats")]
+        [SerializeField] private float resetTime = 5.0f;
 
         private Transform _parentTransform;
         private MeshRenderer _meshRenderer;
+
+        protected BoxCollider Collider;
 
         private float _nextTimeToActivate;
 

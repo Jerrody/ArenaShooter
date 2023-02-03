@@ -27,27 +27,24 @@ namespace Game.Weapons
         public Action ReloadFinishedEvent;
         public Action FireEvent;
 
-        [Header("References")] [SerializeField]
-        protected Transform bulletSpawnPoint;
-
+        [Header("References")]
+        [SerializeField] protected Transform bulletSpawnPoint;
         [SerializeField] protected GameObject scope;
 
-        [Header("Info")] [SerializeField] protected WeaponType weaponType;
+        [Header("Info")] 
+        [SerializeField] protected WeaponType weaponType;
 
-        [Header("Stats")] [SerializeField] protected float damage = 30.0f;
+        [Header("Stats")]
+        [SerializeField] protected float damage = 30.0f;
         [SerializeField] protected float fireRate;
         [SerializeField] protected float maxHitscanRange = 1000.0f;
         [SerializeField] protected Ammo ammo;
 
-        [Header("Field of View Stats")] [SerializeField]
-        private float fieldOfViewScoped = 45.0f;
-
+        [Header("Field of View Stats")]
+        [SerializeField] private float fieldOfViewScoped = 45.0f;
         [SerializeField] private float zoomInFieldOfView = 35.0f;
 
         public Animator animator { get; private set; }
-
-        private ParticleSystem _muzzleFlesh;
-
         public uint currentAmmoClip { get; private set; }
         public uint currentAmmo { get; private set; }
 
@@ -57,6 +54,7 @@ namespace Game.Weapons
 
         public bool isPickedUp;
 
+        private ParticleSystem _muzzleFlesh;
         private float _nextTimeToFire;
 
         private void Awake()

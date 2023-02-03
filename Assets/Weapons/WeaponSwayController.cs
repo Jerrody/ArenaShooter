@@ -5,7 +5,8 @@ namespace Game.Weapons
 {
     public sealed class WeaponSwayController : MonoBehaviour
     {
-        [Header("Stats")] [SerializeField] private float smooth;
+        [Header("Stats")]
+        [SerializeField] private float smooth;
         [SerializeField] private float multiplier;
 
         private PlayerController _playerController;

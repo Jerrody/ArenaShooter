@@ -5,18 +5,19 @@ namespace Game.Characters.Player
 {
     public sealed class PlayerAnimationController : MonoBehaviour // TODO: Make based class for the all Entities.
     {
-        public Action<bool> TriggerFireAnimationEvent;
-        public Action TriggerReloadAmmoAnimationEvent;
-        public Action TriggerReloadNoAmmoAnimationEvent;
-        public Action<Animator> TriggerWeaponSwitchEvent;
-
         private static readonly int IsAimingId = Animator.StringToHash("IsAiming");
         private static readonly int IsFiringId = Animator.StringToHash("IsFiring");
         private static readonly int ReloadAmmoId = Animator.StringToHash("ReloadAmmo");
         private static readonly int ReloadNoAmmoId = Animator.StringToHash("ReloadNoAmmo");
         private static readonly int IsMovingId = Animator.StringToHash("IsMoving");
 
-        [Header("Stats")] [SerializeField] private float runAnimationSpeed = 1.2f;
+        public Action<bool> TriggerFireAnimationEvent;
+        public Action TriggerReloadAmmoAnimationEvent;
+        public Action TriggerReloadNoAmmoAnimationEvent;
+        public Action<Animator> TriggerWeaponSwitchEvent;
+
+        [Header("Stats")]
+        [SerializeField] private float runAnimationSpeed = 1.2f;
 
         private Animator _animator;
         private PlayerController _playerController;

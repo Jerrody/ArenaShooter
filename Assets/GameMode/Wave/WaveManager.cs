@@ -8,12 +8,12 @@ namespace Game.Gamemode.Wave
     {
         public Action WavesEndEvent;
 
-        [Header("References")] [SerializeField]
-        private EnemySpawnerController[] enemySpawnerControllers;
-
+        [Header("References")]
+        [SerializeField] private EnemySpawnerController[] enemySpawnerControllers;
         [SerializeField] private Transform target;
 
-        [Header("Stats")] [SerializeField] private uint spawnEnemies;
+        [Header("Stats")]
+        [SerializeField] private uint spawnEnemies;
         [SerializeField] private uint totalWaves = 3;
         [SerializeField] private float timeBeforeNextWave = 5.0f;
 
