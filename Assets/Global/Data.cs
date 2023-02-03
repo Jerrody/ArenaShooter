@@ -66,24 +66,28 @@ namespace Game.Global.Data
     public static class Data
     {
 #if UNITY_STANDALONE
-        private static readonly string PathToData =
+        private static readonly string PathToFile =
             Application.persistentDataPath + Path.AltDirectorySeparatorChar + "data.json";
+
+        private static readonly string PathToDir = Application.persistentDataPath + Path.AltDirectorySeparatorChar;
 #else
-        private static readonly string PathToData = Application.dataPath + Path.AltDirectorySeparatorChar +
+        private static readonly string PathToFile = Application.dataPath + Path.AltDirectorySeparatorChar +
                                                     "data.json";
+        private static readonly string PathToDir = Application.dataPath + Path.AltDirectorySeparatorChar;
 #endif
 
         public static JsonData jsonData { get; private set; } = new();
 
         public static void Load()
         {
-            if (!File.Exists(PathToData))
+            if (!File.Exists(PathToFile))
             {
-                File.Create(PathToData).Close();
+                Directory.CreateDirectory(PathToDir);
+                File.Create(PathToFile).Close();
                 Save();
             }
 
-            var reader = new StreamReader(PathToData);
+            var reader = new StreamReader(PathToFile);
             var json = reader.ReadToEnd();
             reader.Close();
             jsonData = JsonUtility.FromJson<JsonData>(json);
@@ -93,7 +97,7 @@ namespace Game.Global.Data
         {
             var json = JsonUtility.ToJson(jsonData);
 
-            var writer = new StreamWriter(PathToData);
+            var writer = new StreamWriter(PathToFile);
             writer.Write(json);
             writer.Close();
         }
