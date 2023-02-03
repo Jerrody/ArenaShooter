@@ -1,3 +1,56 @@
+# Welcome
+
+This is a game made in 37 hours!
+Prebuild game version for Windows can be found [here](https://drive.google.com/drive/folders/1pMYLDrPvMPC-EO5E-T0ETQBeSHiKHsW7?usp=sharing).
+
+## Unity Version
+
+Currently used version 2022.2.3f1
+
+### NOTE
+
+In Editor mode could appear unexpected internal engine warnings that cannot be affected, like:
+
+```cs
+[Worker0] Internal: There are remaining Allocations on the JobTempAlloc. This is a leak, and will impact performance
+```
+
+```cs
+[Worker0] To Debug, run app with -diag-job-temp-memory-leak-validation cmd line argument. This will output the callstacks of the leaked allocations.
+```
+
+## Features
+
+- Data Storage
+- Weapon System
+- Health System
+- Enemies
+- Attachment system (more like hardcoded than flexible)
+- Progress System
+- Particle System for the weapons (not so much)
+- Wave Gamemode
+
+## Controls
+
+- WASD - movement
+- Space - Jump
+- Left Click - Shoot
+- Right Click - Aim
+- R - Reload
+- Shift - Run and Zoom (in Aim mode)
+- F1/Escape - Menu
+
+## Code Style
+
+Access order in code:
+
+```cs
+    public float x;
+    protected  bool Y;
+    private uint _z;
+```
+
+```cs
 using System;
 using System.Collections;
 using Game.Characters.Components;
@@ -9,27 +62,22 @@ using UnityEngine.InputSystem;
 namespace Game.Characters.Player
 {
     [RequireComponent(typeof(PlayerInput), typeof(CharacterController))]
-    public sealed class PlayerController : EntityController
+    public sealed class FooController : MonoBehaviour
     {
+        public const string Name = "Foo";
+
         public static LayerMask layerMask { get; private set; }
 
         public event Action EscapePressedEvent;
 
-        public event Action<bool> FireEvent;
-        public event Action ReloadEvent;
-        public event Action<bool> ZoomEvent;
-        public event Action<bool> RunEvent;
-        public event Action<uint> WeaponSwitchEvent;
-
         public Action<bool> AimEvent;
 
-        [Header("Stats")] [SerializeField] private float runSpeed = 30.0f;
-        [SerializeField] private float walkSpeedScoped = 10.0f;
-        [SerializeField] private float jumpMultiplier = 2.0f;
+        [Header("Stats")]
         [SerializeField] private AnimationCurve jumpFallOff;
+        [SerializeField] private float runSpeed = 30.0f;
 
         [Header("Preferences")] [SerializeField]
-        private float mouseSensitivity = 30.0f;
+        private float mouseSensitivity = 15.0f;
 
         public WeaponHolderController weaponHolderController { get; private set; }
 
@@ -204,3 +252,4 @@ namespace Game.Characters.Player
         }
     }
 }
+```

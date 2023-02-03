@@ -6,7 +6,7 @@ namespace Game.UI.Menu.Tabs
 {
     public sealed class TabsController : MonoBehaviour
     {
-        public static Action<uint> TabChangeEvent;
+        public Action<uint> TabChangeEvent;
 
         [SerializeField] private TabController[] tabControllers = new TabController[2];
         private TabController _currentTabController;

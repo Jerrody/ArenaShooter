@@ -6,7 +6,6 @@ using Game.Items.Weapons;
 using Game.Weapons;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Game.UI.HUD
@@ -20,7 +19,7 @@ namespace Game.UI.HUD
         private TMP_Text[] weaponSlotsText = new TMP_Text[3];
 
         [SerializeField] private TMP_Text weaponAmmoText;
-        [SerializeField] private TMP_Text endOfMathText;
+        [SerializeField] private TMP_Text endOfMatchText;
         [SerializeField] private Image healthBar;
         [SerializeField] private GameObject escapeMenu;
         [SerializeField] private GameObject resumeButton;
@@ -35,9 +34,22 @@ namespace Game.UI.HUD
 
         private void Awake()
         {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            Time.timeScale = 1.0f;
+
             _playerController = GetComponentInParent<PlayerController>();
             _playerController.WeaponSwitchEvent += OnWeaponSwitch;
-            WaveManager.WavesEndEvent += OnWin;
+            var waveManger = FindObjectOfType<WaveManager>();
+            if (waveManger != null)
+            {
+                waveManger.WavesEndEvent += OnWin;
+            }
+            else
+            {
+                throw new NullReferenceException("Didn't find `WaveManger` on the Scene.");
+            }
         }
 
         private void Start()
@@ -71,14 +83,6 @@ namespace Game.UI.HUD
                 Mathf.MoveTowards(healthBar.fillAmount, _currentHealth, healthReduceSpeed * Time.deltaTime);
         }
 
-        // public void Unpause()
-        // {
-        //     InputSystem.EnableDevice(Keyboard.current);
-        //     Time.timeScale = 1.0f;
-        //     Cursor.lockState = CursorLockMode.Locked;
-        //     Cursor.visible = false;
-        // }
-
         private void SetNewWeaponSlotIndex(uint weaponIndex)
         {
             _currentActiveWeaponSlot.fontStyle = FontStyles.Normal;
@@ -97,10 +101,15 @@ namespace Game.UI.HUD
             _currentActiveWeaponSlot.color = color;
         }
 
-        private void ActivateEndOfMatchTextWithMenu()
+        public void OnEscapePressed()
         {
-            escapeMenu.gameObject.SetActive(true);
-            endOfMathText.gameObject.SetActive(true);
+            escapeMenu.gameObject.SetActive(!escapeMenu.gameObject.activeSelf);
+            var isEscapeActive = escapeMenu.activeSelf;
+
+            Cursor.visible = isEscapeActive;
+            Cursor.lockState = isEscapeActive ? CursorLockMode.Confined : CursorLockMode.Locked;
+
+            Time.timeScale = isEscapeActive ? 0.0f : 1.0f;
         }
 
         private void OnWeaponSwitch(uint weaponIndex)
@@ -124,11 +133,6 @@ namespace Game.UI.HUD
             weaponAmmoText.text = $"{weaponController.currentAmmoClip}/{weaponController.currentAmmo}";
         }
 
-        private void OnEscapePressed()
-        {
-            escapeMenu.gameObject.SetActive(!escapeMenu.gameObject.activeSelf);
-        }
-
         private void OnHealthChange(float maxHealth, float currentHeath)
         {
             _currentHealth = currentHeath / maxHealth;
@@ -136,16 +140,28 @@ namespace Game.UI.HUD
 
         private void OnDeath()
         {
-            ActivateEndOfMatchTextWithMenu();
-            endOfMathText.text = LoseText;
+            ShowEndOfMatch(LoseText);
             Data.AddLose();
         }
 
         private void OnWin()
         {
-            ActivateEndOfMatchTextWithMenu();
-            endOfMathText.text = WinText;
+            ShowEndOfMatch(WinText);
             Data.AddWin();
+        }
+
+        private void ShowEndOfMatch(string textToDisplay)
+        {
+            endOfMatchText.text = textToDisplay;
+
+            escapeMenu.gameObject.SetActive(true);
+            endOfMatchText.gameObject.SetActive(true);
+            resumeButton.gameObject.SetActive(false);
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+
+            Time.timeScale = 0.0f;
         }
     }
 }

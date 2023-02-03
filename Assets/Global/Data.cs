@@ -29,7 +29,7 @@ namespace Game.Global.Data
         public uint kills;
         public uint deaths;
         public uint wins;
-        public uint killsToOpenScope = 20;
+        public uint killsToOpenScope = 10;
 
         public uint loses;
 

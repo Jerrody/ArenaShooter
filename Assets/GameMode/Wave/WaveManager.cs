@@ -6,8 +6,7 @@ namespace Game.Gamemode.Wave
 {
     public sealed class WaveManager : MonoBehaviour
     {
-        public static Action WavesEndEvent;
-        public static Action EnemyDeathEvent;
+        public Action WavesEndEvent;
 
         [Header("References")] [SerializeField]
         private EnemySpawnerController[] enemySpawnerControllers;
@@ -18,19 +17,19 @@ namespace Game.Gamemode.Wave
         [SerializeField] private uint totalWaves = 3;
         [SerializeField] private float timeBeforeNextWave = 5.0f;
 
-        private uint enemiesPerSpawnPoint => (uint)(spawnEnemies / enemySpawnerControllers.Length);
+        private uint enemiesPerSpawnPoint => (uint)(spawnEnemies / enemySpawnerControllers.Length) / totalWaves;
 
-        private uint _wavesCounter;
-        private float _nextTimeToStartWave;
+        private uint _wavesCounter = 1;
         private uint _enemyCounter;
+        private float _nextTimeToStartWave;
 
         private void Awake()
         {
             _nextTimeToStartWave = timeBeforeNextWave;
             foreach (var enemySpawnerController in enemySpawnerControllers)
                 enemySpawnerController.WaveEndEvent += OnWaveEnd;
-
-            EnemyDeathEvent += OnEnemyDeath;
+            foreach (var enemySpawnerController in enemySpawnerControllers)
+                enemySpawnerController.EnemyDeathEvent += OnEnemyDeath;
         }
 
         private void Start()
@@ -46,8 +45,12 @@ namespace Game.Gamemode.Wave
 
         private void OnWaveEnd()
         {
-            if (_wavesCounter == totalWaves * enemySpawnerControllers.Length)
+            if (_wavesCounter == totalWaves)
+            {
+                foreach (var enemySpawnerController in enemySpawnerControllers)
+                    enemySpawnerController.WaveEndEvent -= OnWaveEnd;
                 return;
+            }
 
             _wavesCounter++;
             Timer.Create(() =>
@@ -60,10 +63,9 @@ namespace Game.Gamemode.Wave
 
         private void OnEnemyDeath()
         {
-            print($"{_enemyCounter} and {spawnEnemies}");
             _enemyCounter++;
             if (_enemyCounter == spawnEnemies)
-                WavesEndEvent?.Invoke();
+                Timer.Create(() => WavesEndEvent?.Invoke(), 5.0f);
         }
     }
 }

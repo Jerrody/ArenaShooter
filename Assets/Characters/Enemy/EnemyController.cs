@@ -2,7 +2,6 @@ using System;
 using Characters.Enemy.Components;
 using Game.Characters;
 using Game.Characters.Components;
-using Game.Gamemode.Wave;
 using Game.Global.Data;
 using UnityEngine;
 using UnityEngine.AI;
@@ -115,9 +114,8 @@ namespace Characters.Enemy
 
         private void OnDeath()
         {
-            print("SEX");
-            WaveManager.EnemyDeathEvent.Invoke();
             enabled = false;
+            target = transform;
             DeathEvent?.Invoke();
         }
     }

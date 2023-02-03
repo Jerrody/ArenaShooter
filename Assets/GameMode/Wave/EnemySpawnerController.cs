@@ -8,6 +8,7 @@ namespace Game.Gamemode.Wave
     public sealed class EnemySpawnerController : MonoBehaviour
     {
         public event Action WaveEndEvent;
+        public event Action EnemyDeathEvent;
 
         [Header("References")] [SerializeField]
         private EnemyController enemy;
@@ -15,7 +16,7 @@ namespace Game.Gamemode.Wave
         [Header("Stats")] [SerializeField] private float spawnTime = 1.0f;
 
         private uint _enemyCount;
-        private uint _spawnedEnemiesCount;
+        private uint _spawnedEnemiesCount = 1;
 
         public void SpawnEnemy(Transform target, uint count)
         {
@@ -32,6 +33,7 @@ namespace Game.Gamemode.Wave
             var position = transform.position;
             var spawnedEnemy = Instantiate(enemy, position, Quaternion.identity);
             spawnedEnemy.target = target;
+            spawnedEnemy.DeathEvent += () => EnemyDeathEvent?.Invoke();
 
             if (_spawnedEnemiesCount == count)
             {

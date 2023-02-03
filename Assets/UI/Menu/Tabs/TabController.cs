@@ -17,9 +17,16 @@ namespace Game.UI.Menu.Tabs
 
         [Header("Info")] [SerializeField] protected TabType tabType;
 
+        private TabsController _tabsController;
+
+        private void Awake()
+        {
+            _tabsController = GetComponentInParent<TabsController>();
+        }
+
         public void OnClick()
         {
-            TabsController.TabChangeEvent?.Invoke((uint)tabType);
+            _tabsController.TabChangeEvent?.Invoke((uint)tabType);
         }
 
         public void DisableTab()
